@@ -1,0 +1,120 @@
+					;-----------------------Package Sources------------------------------
+					;Set package archive references as well as the priority per ref.
+					;The higher the number, the more priority the archive has.
+(setq package-archives
+      '(("GNU ELPA"      . "https://elpa.gnu.org/packages/")
+	("MELPA Stable"  . "https://stable.melpa.org/packages/")
+	("MELPA"         . "https://melpa.org/packages/"))
+      package-archive-priorities
+      '(("GNU ELPA"      . 10)
+	("MELPA Stable"  . 5)
+	("MELPA"         . 0)))
+(package-initialize)
+
+(eval-when-compile
+  (require 'use-package))
+(require 'package)
+
+					;-----------------------Packages-------------------------------------
+					;Invoke 'use-package' package and set the default ensure to t, to allow
+					;downloading of packages if they are not found on the machine.
+					;For more information see GitHub project page:
+					;https://github.com/jwiegley/use-package/
+(require 'use-package-ensure)
+(setq use-package-always-ensure t)
+
+(use-package magit
+  :bind (("C-x g" . magit-status)
+	 ("C-x M-g" . magit-dispatch)))
+
+(use-package company
+  :config
+  (global-company-mode 1))
+
+(use-package drag-stuff
+  :config
+  (drag-stuff-global-mode 1)
+  :bind (("C-S-t" . drag-stuff-up)
+	 ("C-S-y" . drag-stuff-down)
+	 ("C-S-g" . drag-stuff-left)
+	 ("C-S-h" . drag-stuff-right)))
+
+(use-package darkokai-theme)
+
+					;Keep packages up-to-date automatically.
+(use-package auto-package-update
+  :config
+  (setq auto-package-update-old-versions t)
+  (setq auto-package-update-hide-results t)
+  (auto-package-update-maybe))
+
+					;-----------------------Hooks---------------------------------------
+					;Prog-mode-hook allows changes which will then be executed for all
+					;programming modes (that are derived from 'prog-mode'.
+					;One benefit of using this mode is that global minor modes no longer
+					;have to maintain a long list of suitable major modes.
+					;Instead, they can simply check if a mode is derived from one of the
+					;base modes
+(add-hook 'prog-mode-hook
+	  (lambda ()
+	    (interactive)
+	    (whitespace-mode 0)
+	    (setq whitespace-line-column 80)
+	    (whitespace-mode 1)))
+
+					;Disable emacs version control which is enabled by default.
+					;This prevents emacs from doing extra work, however, we want it available
+					;if we are not using with the Magit package.
+(setq vc-handled-backends (delq 'Git vc-handled-backends))
+
+					;-----------------------Bindings------------------------------------
+					;To magically bind stuff, you can use C-x <ESC> <ESC> C-a C-k C-g
+					;doing so requires you to first bind in interactive mode using
+					;M-x global-set-key <RET> /key cmd/ <RET>
+					;Alternatively bind in current maj. mode with local-set-key.
+
+					;Allow 'C-S-d' (Control-Shift-d) to duplicate current line.
+(defun duplicate-line ()
+  (interactive)
+  (save-mark-and-excursion
+    (beginning-of-line)
+    (insert (thing-at-point 'line t))))
+
+(global-set-key (kbd "C-S-d") 'duplicate-line)
+
+					;Allow 'C-S-j' to move a line up by one line.
+					;Allow 'C-S-k' to move a line down by one line.
+(defun move-line-up ()
+  (interactive)
+  (let ((col (current-column)))
+    (save-excursion
+      (forward-line)
+      (transpose-lines -1))
+    (forward-line -1)
+    (move-to-column col)))
+
+(defun move-line-down ()
+  (interactive)
+  (let ((col (current-column)))
+    (save-excursion
+      (forward-line)
+      (transpose-lines 1))
+    (forward-line)
+    (move-column col)))
+
+(global-set-key (kbd "C-S-j") 'move-line-up)
+(global-set-key (kbd "C-S-k") 'move-line-down)
+
+					;Enable multiple cursors from the 'multiple-cursors'
+					;package. Add key bindings for ease of use.
+					;'C-g' can be used to quit multiple cursors mode.
+					;'C-j' can be used to insert a new line, as <return> exits the mode.
+(use-package multiple-cursors
+  :bind (("C-|" . mc/edit-lines)
+	 ("C->" . mc/mark-next-like-this)
+	 ("C-<" . mc/mark-previous-like-this)
+	 ("C-C C-<" . mc/mark-all-like-this)
+	 ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
+
+					;Remove the scrollbars globally for all frames.
+(scroll-bar-mode -1)
