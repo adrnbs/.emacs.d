@@ -73,6 +73,15 @@
   (setq auto-package-update-hide-results t)
   (auto-package-update-maybe))
 
+					;Use dumb-jump package for jumping to package definitions within a project.
+(use-package dumb-jump
+  :bind (("M-g o" . dumb-jump-go-other-window)
+	 ("M-g j" . dumb-jump-go)
+	 ("M-g i" . dumb-jump-go-prompt)
+	 ("M-g x" . dumb-jump-go-prefer-external)
+	 ("M-g z" . dumb-jump-go-prefer-external-other-window))
+  :config (setq dumb-jump-selector 'helm)) ;; (setq dumb-jump-selector 'ivy)
+
 					;-----------------------Hooks---------------------------------------
 					;Prog-mode-hook allows changes which will then be executed for all
 					;programming modes (that are derived from 'prog-mode'.
@@ -129,6 +138,7 @@
 
 (global-set-key (kbd "C-S-j") 'move-line-up)
 (global-set-key (kbd "C-S-k") 'move-line-down)
+(global-set-key (kbd "*") 'speedbar)
 
 					;Enable multiple cursors from the 'multiple-cursors'
 					;package. Add key bindings for ease of use.
