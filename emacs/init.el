@@ -27,10 +27,12 @@
   :bind (("C-x g" . magit-status)
 	 ("C-x M-g" . magit-dispatch)))
 
+					;Allow auto-complete on emacs functions and variables
 (use-package company
   :config
   (global-company-mode 1))
 
+					;Use drag-stuff to manipulate highlighted blocks in global mode
 (use-package drag-stuff
   :config
   (drag-stuff-global-mode 1)
@@ -39,12 +41,20 @@
 	 ("C-S-g" . drag-stuff-left)
 	 ("C-S-h" . drag-stuff-right)))
 
+					;Use combination of projectile and helm to fuzzy file search inside and
+					;outside of projects. 'C-x C-f' can be invoked to open a file like
+					;normal, however it will have autocomplete options. 'C-c p f' can be used
+					;while inside of a project, and does not require the full path.
+					;While invoked, 'C-j' is used to complete instead of <TAB>.
 (use-package projectile
   :config
   (projectile-global-mode)
   (setq projectile-indexing-method 'alien)
   (setq projectile-enable-caching t))
 
+					;See above comment block. Bindings are set here as the use-package
+					;does not directly support unbind for keys. More straight forward
+					;in this case to avoid invoking use-package's :bind keyword.
 (use-package helm)
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
