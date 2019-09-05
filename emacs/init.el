@@ -39,6 +39,21 @@
 	 ("C-S-g" . drag-stuff-left)
 	 ("C-S-h" . drag-stuff-right)))
 
+(use-package projectile
+  :config
+  (projectile-global-mode)
+  (setq projectile-indexing-method 'alien)
+  (setq projectile-enable-caching t))
+
+(use-package helm)
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
+(global-unset-key (kbd "C-x c"))
+(helm-autoresize-mode 1)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(setq helm-M-x-fuzzy-match t)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+(helm-mode 1)
+
 (use-package darkokai-theme)
 
 					;Keep packages up-to-date automatically.
