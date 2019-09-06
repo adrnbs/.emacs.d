@@ -22,6 +22,7 @@
 					;https://github.com/jwiegley/use-package/
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
+(show-paren-mode 1)
 
 (use-package magit
   :bind (("C-x g" . magit-status)
@@ -56,6 +57,7 @@
 					;does not directly support unbind for keys. More straight forward
 					;in this case to avoid invoking use-package's :bind keyword.
 (use-package helm)
+(use-package helm-ag)
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
 (helm-autoresize-mode 1)
@@ -64,7 +66,7 @@
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (helm-mode 1)
 
-(use-package darkokai-theme)
+(use-package night-owl-theme)
 
 					;Keep packages up-to-date automatically.
 (use-package auto-package-update
@@ -81,6 +83,14 @@
 	 ("M-g x" . dumb-jump-go-prefer-external)
 	 ("M-g z" . dumb-jump-go-prefer-external-other-window))
   :config (setq dumb-jump-selector 'helm)) ;; (setq dumb-jump-selector 'ivy)
+
+					;Allow hooking into Trello with org files - set files below to avoid
+					;'org-trello' being called for each org-mode buffer (since
+					;'org-trello' is a minor mode of org).
+(use-package org-trello
+  :config
+  (custom-set-variables '(org-trello-files '("path/to/file0" "/path/to/file1")))
+  )
 
 					;-----------------------Hooks---------------------------------------
 					;Prog-mode-hook allows changes which will then be executed for all
