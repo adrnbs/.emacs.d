@@ -89,8 +89,7 @@
 					;'org-trello' is a minor mode of org).
 (use-package org-trello
   :config
-  (custom-set-variables '(org-trello-files '("path/to/file0" "/path/to/file1")))
-  )
+  (custom-set-variables '(org-trello-files '("path/to/file1" "file2"))))
 
 					;-----------------------Hooks---------------------------------------
 					;Prog-mode-hook allows changes which will then be executed for all
@@ -148,7 +147,7 @@
 
 (global-set-key (kbd "C-S-j") 'move-line-up)
 (global-set-key (kbd "C-S-k") 'move-line-down)
-(global-set-key (kbd "*") 'speedbar)
+(global-set-key (kbd "C-.") 'speedbar)
 
 					;Enable multiple cursors from the 'multiple-cursors'
 					;package. Add key bindings for ease of use.
