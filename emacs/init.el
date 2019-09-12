@@ -15,6 +15,8 @@
   (require 'use-package))
 (require 'package)
 
+(autoload 'powershell "powershell" "Run PowerShell as a shell within Emacs." t)
+
 					;-----------------------Packages-------------------------------------
 					;Invoke 'use-package' package and set the default ensure to t, to allow
 					;downloading of packages if they are not found on the machine.
