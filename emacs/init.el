@@ -15,6 +15,22 @@
   (require 'use-package))
 (require 'package)
 
+					;Manage emacs temp files cleanly
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
+					;Allow deleted files from emacs to be moved to recycle bin
+(setq delete-by-moving-to-trash t)
+
+					;Remove restriction for upcase/downcase region
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
+					;Set column position display
+(setq column-number-mode t)
+
 ;(autoload 'powershell "powershell" "Run PowerShell as a shell within Emacs." t)
 
 					;-----------------------Packages-------------------------------------
@@ -164,5 +180,8 @@
 	 ("C-C C-<" . mc/mark-all-like-this)
 	 ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
 
-					;Remove the scrollbars globally for all frames.
-(scroll-bar-mode -1)
+					;Remove the scrollbars globally for all frames as well as other
+					;gross gui content.
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
