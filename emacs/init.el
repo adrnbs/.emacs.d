@@ -15,7 +15,7 @@
   (require 'use-package))
 (require 'package)
 
-(autoload 'powershell "powershell" "Run PowerShell as a shell within Emacs." t)
+;(autoload 'powershell "powershell" "Run PowerShell as a shell within Emacs." t)
 
 					;-----------------------Packages-------------------------------------
 					;Invoke 'use-package' package and set the default ensure to t, to allow
@@ -25,6 +25,8 @@
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 (show-paren-mode 1)
+
+(use-package powershell)
 
 (use-package magit
   :bind (("C-x g" . magit-status)
