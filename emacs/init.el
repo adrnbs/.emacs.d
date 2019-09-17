@@ -88,6 +88,8 @@
 
 (use-package night-owl-theme)
 
+(use-package groovy-mode)
+
 					;Keep packages up-to-date automatically.
 (use-package auto-package-update
   :config
@@ -185,3 +187,6 @@
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+
+					;Allow saving of registers etc
+(desktop-save-mode)
