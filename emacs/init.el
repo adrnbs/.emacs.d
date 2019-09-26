@@ -86,7 +86,8 @@
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (helm-mode 1)
 
-(use-package night-owl-theme)
+(use-package doom-themes)
+(load-theme 'doom-spacegrey t)
 
 (use-package groovy-mode)
 
@@ -109,9 +110,9 @@
 					;Allow hooking into Trello with org files - set files below to avoid
 					;'org-trello' being called for each org-mode buffer (since
 					;'org-trello' is a minor mode of org).
-(use-package org-trello
-  :config
-  (custom-set-variables '(org-trello-files '("path/to/file1" "file2"))))
+;(use-package org-trello
+;  :config
+;  (custom-set-variables '(org-trello-files '("path/to/file1" "file2"))))
 
 					;-----------------------Hooks---------------------------------------
 					;Prog-mode-hook allows changes which will then be executed for all
@@ -190,3 +191,25 @@
 
 					;Allow saving of registers etc
 (desktop-save-mode)
+
+					;Add formatting for LaTeX exports in org mode
+(add-to-list 'org-latex-classes
+             '("adornbosarticle"
+               "\\documentclass{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[T1]{fontenc}
+\\usepackage{graphicx}
+\\usepackage{longtable}
+\\usepackage{hyperref}
+\\usepackage{natbib}
+;Commenting out the following two packages to avoid
+;conflicts with documented Regex items
+;\\usepackage{amssymb}
+;\\usepackage{amsmath}
+\\usepackage{geometry}
+\\geometry{a4paper,left=2.5cm,top=2cm,right=2.5cm,bottom=2cm,marginparsep=7pt, marginparwidth=.6in}"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
