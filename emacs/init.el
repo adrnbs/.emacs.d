@@ -193,19 +193,19 @@
 (desktop-save-mode)
 
 					;Add formatting for LaTeX exports in org mode
+
 (add-to-list 'org-latex-classes
-             '("adornbosarticle"
+             '("adarticle"
                "\\documentclass{article}
 \\usepackage[utf8]{inputenc}
+\\usepackage{verbatim}
 \\usepackage[T1]{fontenc}
 \\usepackage{graphicx}
 \\usepackage{longtable}
 \\usepackage{hyperref}
 \\usepackage{natbib}
-;Commenting out the following two packages to avoid
-;conflicts with documented Regex items
-;\\usepackage{amssymb}
-;\\usepackage{amsmath}
+\\usepackage{amssymb}
+\\usepackage{amsmath}
 \\usepackage{geometry}
 \\geometry{a4paper,left=2.5cm,top=2cm,right=2.5cm,bottom=2cm,marginparsep=7pt, marginparwidth=.6in}"
                ("\\section{%s}" . "\\section*{%s}")
