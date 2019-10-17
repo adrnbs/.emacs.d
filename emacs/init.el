@@ -86,8 +86,9 @@
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (helm-mode 1)
 
-(use-package doom-themes)
-(load-theme 'doom-spacegrey t)
+(use-package spacemacs-theme)
+(load-theme 'spacemacs-dark t)
+;(use-package doom-themes)
 
 (use-package groovy-mode)
 
@@ -171,6 +172,13 @@
 (global-set-key (kbd "C-S-j") 'move-line-up)
 (global-set-key (kbd "C-S-k") 'move-line-down)
 (global-set-key (kbd "C-.") 'speedbar)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c b") 'org-iswitchb)
+
+(setq org-agenda-files (quote ("~/orgfiles"
+			       "~/orgfiles/p"
+			       "~/orgfiles/w")))
 
 					;Enable multiple cursors from the 'multiple-cursors'
 					;package. Add key bindings for ease of use.
