@@ -139,7 +139,6 @@
 					;doing so requires you to first bind in interactive mode using
 					;M-x global-set-key <RET> /key cmd/ <RET>
 					;Alternatively bind in current maj. mode with local-set-key.
-
 					;Allow 'C-S-d' (Control-Shift-d) to duplicate current line.
 (defun duplicate-line ()
   (interactive)
@@ -172,13 +171,52 @@
 (global-set-key (kbd "C-S-j") 'move-line-up)
 (global-set-key (kbd "C-S-k") 'move-line-down)
 (global-set-key (kbd "C-.") 'speedbar)
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c b") 'org-iswitchb)
 
-(setq org-agenda-files (quote ("~/orgfiles"
-			       "~/orgfiles/p"
-			       "~/orgfiles/w")))
+					;Org configuration based on similar setup from http://doc.norang.ca/org-mode.html
+(add-to-list 'load-path (expand-file-name "~/git/org-mode/lisp"))
+(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
+;(require 'org)
+
+					;Standard key bindings
+(global-set-key (kbd "C-c a") 'org-agenda) ;Agenda
+(global-set-key (kbd "C-c l") 'org-store-link) ;Store link for retrieval with C-c C-l
+(global-set-key (kbd "C-c b") 'org-iswitchb) ;Switch to Org file
+
+(setq org-agenda-files (quote ("~/git/orgfiles"
+			       "~/git/orgfiles/p"
+			       "~/git/w")))
+
+(add-to-list 'auto-mode-alist '("\\.\\(org((|org_archive\\|txt\\)$" . org-mode))
+
+(global-set-key (kbd "<f1>") 'org-agenda) ;Shorter agenda bind
+(global-set-key (kbd "<f2>") 'org-clock-goto) ;Go to currently clocked item
+(global-set-key (kbd "<f4>") 'bh/widen)
+(global-set-key (kbd "<f5>") 'org-cycle-agenda-files) ;Go to next Org file in org-agenda-files
+(global-set-key (kbd "<f3> a") 'bh/show-org-agenda)
+(global-set-key (kbd "<f3> c") 'calendar)
+(global-set-key (kbd "<f3> f") 'boxquote-insert-file) ;Boxquote insert a file
+(global-set-key (kbd "<f3> I") 'bh/punch-in) ;Punch clock in
+(global-set-key (kbd "<f3> O") 'bh/punch-out) ;Punch clock out
+(global-set-key (kbd "<f3> o") 'bh/make-org-scratch) ;Switch to Org enabled scratch file
+(global-set-key (kbd "<f9> s") 'bh/switch-to-scratch) ;Switch to standard scratch file
+(global-set-key (kbd "<f3> r") 'boxquote-region) ;Boxquote selected region
+(global-set-key (kbd "<f3> l") 'org-toggle-link-display)
+(global-set-key (kbd "<f3> SPC") 'bh/clock-in-last-task)
+(global-set-key (kbd "C-<f3>") 'previous-buffer)
+(global-set-key (kbd "C-<f4>") 'next-buffer)
+(global-set-key (kbd "M-<f3>") 'org-toggle-inline-images)
+(global-set-key (kbd "C-x n r") 'narrow-to-region)
+(global-set-key (kbd "C-<f2>") 'org-clock-in) ;Clock in a task (show menu with prefix)
+(global-set-key (kbd "C-c c") 'org-capture) ;Capture a task
+
+(defun bh/switch-to-scratch ()
+  (interactive)
+  (switch-to-buffer "*scratch*"))
+
+(defun bh/make-org-scratch ()
+  (interactive)
+  (switch-to-buffer "*org scratch*"))
+
 
 					;Enable multiple cursors from the 'multiple-cursors'
 					;package. Add key bindings for ease of use.
