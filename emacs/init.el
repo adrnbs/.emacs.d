@@ -42,6 +42,10 @@
 (setq use-package-always-ensure t)
 (show-paren-mode 1)
 
+(use-package flycheck
+  :init (global-flycheck-mode))
+(use-package flycheck-rust)
+
 (use-package powershell)
 
 (use-package magit
@@ -60,6 +64,11 @@
   (lambda () (setq indent-tabs-mode nil))
   (setq rust-format-on-save t))
 (require 'rust-mode)
+
+;; Allow Cargo mode for Emacs. Gives key combos to perform Cargo tasks within Rust projects
+(use-package cargo
+  :config
+  (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
 (use-package yaml-mode
   :config
@@ -163,8 +172,8 @@
 	  (lambda ()
 	    (interactive)
 	    (whitespace-mode 0)
-	    (setq whitespace-line-column 120)
-	    (whitespace-mode 1)))
+	    (setq whitespace-line-column 80)
+	   ;; (whitespace-mode 1)))
 
 					;;Disable emacs version control which is enabled by default.
 					;;This prevents emacs from doing extra work, however, we want it available
