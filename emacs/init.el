@@ -174,7 +174,7 @@
 	    (whitespace-mode 0)
 	    (setq whitespace-line-column 80)
 	   ;; (whitespace-mode 1)))
-
+))
 					;;Disable emacs version control which is enabled by default.
 					;;This prevents emacs from doing extra work, however, we want it available
 					;;if we are not using with the Magit package.
@@ -193,6 +193,8 @@
     (insert (thing-at-point 'line t))))
 
 (global-set-key (kbd "C-S-d") 'duplicate-line)
+
+(global-set-key (kbd "C-c d l n") 'global-display-line-numbers-mode)
 
 					;;Allow 'C-S-j' to move a line up by one line.
 					;;Allow 'C-S-k' to move a line down by one line.
