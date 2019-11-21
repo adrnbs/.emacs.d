@@ -31,8 +31,6 @@
 					;;Set column position display
 (setq column-number-mode t)
 
-;;(autoload 'powershell "powershell" "Run PowerShell as a shell within Emacs." t)
-
 					;;-----------------------Packages-------------------------------------
 					;;Invoke 'use-package' package and set the default ensure to t, to allow
 					;;downloading of packages if they are not found on the machine.
@@ -45,8 +43,6 @@
 (use-package flycheck
   :init (global-flycheck-mode))
 (use-package flycheck-rust)
-
-(use-package powershell)
 
 (use-package magit
   :bind (("C-x g" . magit-status)
@@ -91,6 +87,7 @@
  ((string-equal system-type "windows-nt") ; Windows
   (progn
     ;;Might have to use choco install pt, if path error when attempting to run projectile-pt
+    (use-package powershell)
     (use-package pt
       :bind (("C-c p" . 'projectile-pt)))
     (message "Using Windows configuration for projectile (pt)")))
@@ -194,7 +191,8 @@
 
 (global-set-key (kbd "C-S-d") 'duplicate-line)
 
-(global-set-key (kbd "C-c d l n") 'global-display-line-numbers-mode)
+(global-set-key (kbd "C-c g l n") 'global-display-line-numbers-mode)
+(global-set-key (kbd "C-c d l n") 'display-line-numbers-mode)
 
 					;;Allow 'C-S-j' to move a line up by one line.
 					;;Allow 'C-S-k' to move a line down by one line.
@@ -216,15 +214,19 @@
     (forward-line)
     (move-column col)))
 
+(define-key org-mode-map "\M-q" 'toggle-truncate-lines)
 (global-set-key (kbd "C-S-j") 'move-line-up)
 (global-set-key (kbd "C-S-k") 'move-line-down)
 (global-set-key (kbd "C-.") 'speedbar)
 
-					;;Org configuration based on similar setup from http://doc.norang.ca/org-mode.html
-(add-to-list 'load-path (expand-file-name "~/git/org-mode/lisp"))
+;;Org configuration based on similar setup from http://doc.norang.ca/org-mode.html
+;; Begin Org setup stuff
+(if (boundp 'org-mode-user-lisp-path)
+    (add-to-list 'load-path org-mode-user-lisp-path)
+  (add-to-list 'load-path (expand-file-name "~/git/org-mode/lisp")))
+
 (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
-(define-key org-mode-map "\M-q" 'toggle-truncate-lines)
-;;(require 'org)
+(require 'org)
 
 					;;Standard key bindings
 (global-set-key (kbd "C-c a") 'org-agenda) ;;Agenda
@@ -239,7 +241,7 @@
 
 (global-unset-key (kbd "<f3>"))
 
-(global-set-key (kbd "<f12>") 'org-agenda)
+(global-set-key (kbd "<f10>") 'org-agenda)
 (global-set-key (kbd "<f5>") 'bh/org-todo)
 (global-set-key (kbd "<S-f5>") 'bh/widen)
 (global-set-key (kbd "<f7>") 'bh/set-truncate-lines)
@@ -272,7 +274,7 @@
 (global-set-key (kbd "C-<f10>") 'next-buffer)
 (global-set-key (kbd "<f11>") 'org-clock-goto)
 (global-set-key (kbd "C-<f11>") 'org-clock-in)
-(global-set-key (kbd "C-s-<f12>") 'bh/save-then-publish)
+(global-set-key (kbd "C-s-<f3>") 'bh/save-then-publish)
 (global-set-key (kbd "C-c c") 'org-capture)
 
 (defun bh/hide-other ()
@@ -302,7 +304,58 @@
   (interactive)
   (switch-to-buffer "*scratch*"))
 
+(setq org-todo-keywords
+      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
 
+(setq org-todo-keyword-faces
+      (quote (("TODO" :foreground "red" :weight bold)
+              ("NEXT" :foreground "blue" :weight bold)
+              ("DONE" :foreground "forest green" :weight bold)
+              ("WAITING" :foreground "orange" :weight bold)
+              ("HOLD" :foreground "magenta" :weight bold)
+              ("CANCELLED" :foreground "forest green" :weight bold)
+              ("MEETING" :foreground "forest green" :weight bold)
+              ("PHONE" :foreground "forest green" :weight bold))))
+
+(setq org-use-fast-todo-selection t)
+(setq org-treat-S-cursor-todo-selection-as-state-change nil)
+
+(setq org-todo-state-tags-triggers
+      (quote (("CANCELLED" ("CANCELLED" . t))
+              ("WAITING" ("WAITING" . t))
+              ("HOLD" ("WAITING") ("HOLD" . t))
+              (done ("WAITING") ("HOLD"))
+              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+
+(setq org-directory "~/git/orgfiles")
+(setq org-default-notes-file "~/git/orgfiles/refile.org")
+
+;; I use C-c c to start capture mode
+(global-set-key (kbd "C-c c") 'org-capture)
+
+;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
+(setq org-capture-templates
+      (quote (("t" "todo" entry (file "~/git/orgfiles/refile.org")
+               "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+              ("r" "respond" entry (file "~/git/orgfiles/refile.org")
+               "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+              ("n" "note" entry (file "~/git/orgfiles/refile.org")
+               "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+              ("j" "Journal" entry (file+datetree "~/git/orgfiles/diary.org")
+               "* %?\n%U\n" :clock-in t :clock-resume t)
+              ("w" "org-protocol" entry (file "~/git/orgfiles/refile.org")
+               "* TODO Review %c\n%U\n" :immediate-finish t)
+              ("m" "Meeting" entry (file "~/git/orgfiles/refile.org")
+               "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+              ("p" "Phone call" entry (file "~/git/orgfiles/refile.org")
+               "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
+              ("h" "Habit" entry (file "~/git/orgfiles/refile.org")
+               "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+
+;; End of Org setup stuff
 					;;Enable multiple cursors from the 'multiple-cursors'
 					;;package. Add key bindings for ease of use.
 					;;'C-g' can be used to quit multiple cursors mode.
