@@ -1,6 +1,11 @@
-					;-----------------------Package Sources------------------------------
-					;Set package archive references as well as the priority per ref.
-					;The higher the number, the more priority the archive has.
+;;; init.el --- Main initialization file for Emacs
+;;; Commentary:
+;;; Emacs startup file; contains bindings, env settings, repo sources, etc.
+
+;;; Code:
+;; Package Sources:
+;; Set package archive references as well as the priority per reference.
+;; The higher the number, the more priority the archive has.
 (setq package-archives
       '(("GNU ELPA"      . "https://elpa.gnu.org/packages/")
 	("MELPA Stable"  . "https://stable.melpa.org/packages/")
@@ -11,61 +16,117 @@
 	("MELPA"         . 0)))
 (package-initialize)
 
-(eval-when-compile
-  (require 'use-package))
-(require 'package)
-
-;; Manage emacs temp files cleanly
+;; Manage temporary files that are generated from within Emacs.
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
-					;;Allow deleted files from emacs to be moved to recycle bin
+;; Allow deleted files from Emacs to be moved to trash.
 (setq delete-by-moving-to-trash t)
 
-					;;Remove restriction for upcase/downcase region
+;; Configure references for other elisp files to be imported into init.el.
+(defconst user-init-dir
+  (cond ((boundp 'user-emacs-directory)
+	 user-emacs-directory)
+	((boundp 'user-init-directory)
+	 user-init-directory)
+	(t "~/.emacs.d/")))
+
+(defun load-user-file (file)
+  (interactive "f")
+  "Load a file in current user's configuration directory"
+  (load-file (expand-file-name file user-init-dir)))
+(load-user-file "org-mode.el") ;; Org mode/Org agenda configurations.
+
+;; Set font(s)
+(add-to-list 'default-frame-alist '(font . "Hack"))
+(set-face-attribute 'default nil
+		    ;;:family "Hack")
+		    :font "-unknown-Hack-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
+
+;; Remove restriction for upcase/downcase region.
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
-					;;Set column position display
+;; Set column position display for buffer (l, c).
 (setq column-number-mode t)
 
-					;;-----------------------Packages-------------------------------------
-					;;Invoke 'use-package' package and set the default ensure to t, to allow
-					;;downloading of packages if they are not found on the machine.
-					;;For more information see GitHub project page:
-					;;https://github.com/jwiegley/use-package/
+;; Packages:
+;; Invoke 'use-package' package and set the default use-package-always-ensure
+;; to t, to allow downloading of packages if they are not found on the machine.
+;; For more information see GitHub project page:
+;; https://github.com/jwiegley/use-package/
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
+
+;; OS specifier for certain packages.
+(cond
+ ((string-equal system-type "windows-nt") ;; Windows
+  (progn
+    ;; May have to use choco install pt, if path error when attempting to run
+    ;; projectile-pt initially.
+    (use-package pt
+      :bind (("C-c p" . 'projectile-pt)))
+    
+    ;; PowerShell package for shell integration.
+    (use-package powershell)
+    (message "Using Windows environment configurations.")))
+ ((string-equal system-type "darwin") ;; Mac
+  (progn
+    ;; Projectile for non Windows.
+    (use-package projectile
+      :config
+      (projectile-mode +1)
+      (setq projectile-indexing-method 'alien)
+      (setq projectile-enable-caching t)
+      :bind ("C-c p" . 'projectile-command-map))
+    (message "Using Mac OS X environment configurations.")))
+ ((string-equal system-type "gnu/linux") ;; Linux
+  (progn
+    ;; Projectile for non Windows.
+    (use-package projectile
+      :config
+      (projectile-mode +1)
+      (setq projectile-indexing-method 'alien)
+      (setq projectile-enable-caching t)
+      :bind (("C-c p" . 'projectile-command-map)))
+    (message "Using Linux environment configurations."))))
+
+
+;;; ----move to miscellaneous
 (show-paren-mode 1)
 
+;; Flycheck for syntax checking.
 (use-package flycheck
   :init (global-flycheck-mode))
-(use-package flycheck-rust)
+(use-package flycheck-rust) ;; Syntaxing for Rust.
 
+;; Magit for Git integration.
 (use-package magit
   :bind (("C-x g" . magit-status)
 	 ("C-x M-g" . magit-dispatch)))
 
-					;;Allow auto-complete on emacs functions and variables
+;; Company for auto-completion in Emacs' functions and variables.
 (use-package company
   :config
   (global-company-mode 1))
 
-;;Install and load rust-mode for editing code w/ indents and rustfmt
-;;rust-format-buffer will format code with rustfmt if installed, when saving a buffer
+;; Install and load rust-mode for editing code w/ indents and rustfmt.
+;; Rust-format-buffer will format code with rustfmt if installed
+;; (occurs upon buffer saving).
 (use-package rust-mode
   :config
   (lambda () (setq indent-tabs-mode nil))
   (setq rust-format-on-save t))
 (require 'rust-mode)
 
-;; Allow Cargo mode for Emacs. Gives key combos to perform Cargo tasks within Rust projects
+;; Allows key combos to perform Cargo tasks within Rust projects.
 (use-package cargo
   :config
   (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
+;; Yaml editing mode integration.
 (use-package yaml-mode
   :config
   (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
@@ -73,7 +134,7 @@
 (add-hook 'yaml-mode-hook
 	  '(lambda () (define-key yaml-mode-map "<RET>" 'newline-and-indent)))
 
-					;;Use drag-stuff to manipulate highlighted blocks in global mode
+;; Use drag-stuff to manipulate highlighted blocks in global mode(s).
 (use-package drag-stuff
   :config
   (drag-stuff-global-mode 1)
@@ -82,67 +143,45 @@
 	 ("C-S-g" . drag-stuff-left)
 	 ("C-S-h" . drag-stuff-right)))
 
-;; check OS type to determine what to use for projectile/pt
-(cond
- ((string-equal system-type "windows-nt") ; Windows
-  (progn
-    ;;Might have to use choco install pt, if path error when attempting to run projectile-pt
-    (use-package powershell)
-    (use-package pt
-      :bind (("C-c p" . 'projectile-pt)))
-    (message "Using Windows configuration for projectile (pt)")))
- ((string-equal system-type "darwin") ; Mac
-  (progn
-    (use-package projectile
-      :config
-      (projectile-mode +1)
-      (setq projectile-indexing-method 'alien)
-      (setq projectile-enable-caching t)
-      :bind ("C-c p" . 'projectile-command-map))
-    (message "Using Mac OS X configuration for projectile")))
- ((string-equal system-type "gnu/linux") ; Linux
-  (progn
-    (use-package projectile
-      :config
-      (projectile-mode +1)
-      (setq projectile-indexing-method 'alien)
-      (setq projectile-enable-caching t)
-      :bind (("C-c p" . 'projectile-command-map)))
-    (message "Using Linux configuration for projectile"))))
-
-					;;Use combination of projectile and helm to fuzzy file search inside and
-					;;outside of projects. 'C-x C-f' can be invoked to open a file like
-					;;normal, however it will have autocomplete options. 'C-c p f' can be used
-					;;while inside of a project, and does not require the full path.
-					;;While invoked, 'C-j' is used to complete instead of <TAB>.
-
-					;;See above comment block. Bindings are set here as the use-package
-					;;does not directly support unbind for keys. More straight forward
-					;;in this case to avoid invoking use-package's :bind keyword.
+;; Use combination of projectile and helm to fuzzy file search inside and
+;; outside of projects. 'C-x C-f' can be invoked to open a file like
+;; normal, however it will have autocomplete options. 'C-c p f' can be used
+;; while inside of a project, and does not require the full path.
+;; While invoked, 'C-j' is used to complete instead of <TAB>.
+;; Bindings are set here as the use-package does not directly support
+;; unbinding of keys. More straight forward in this case to avoid
+;; invoking use-package's :bind keyword.
 (global-unset-key (kbd "C-x c"))
 (use-package helm)
+
+;; Use silver-searcher package specifically.
+;; See https://github.com/syohex/emacs-helm-ag.
 (use-package helm-ag
   :bind (("C-c h" . 'helm-command-prefix)
 	 ("C-c s b" . 'helm-filtered-bookmarks)
 	 ("M-x" . 'helm-M-x)
 	 ("C-x C-f" . 'helm-find-files)))
 (helm-autoresize-mode 1)
+
+;; Allow fuzzy matching so you can word vomit.
 (setq helm-M-x-fuzzy-match t)
 (helm-mode 1)
 
+;; Nice colors.
 (use-package spacemacs-theme)
 (load-theme 'spacemacs-dark t)
 
+;; Groovy editing mode integration.
 (use-package groovy-mode)
 
-					;;Keep packages up-to-date automatically.
+;; Keep packages up-to-date automatically.
 (use-package auto-package-update
   :config
   (setq auto-package-update-old-versions t)
   (setq auto-package-update-hide-results t)
   (auto-package-update-maybe))
 
-					;;Use dumb-jump package for jumping to package definitions within a project.
+;; Use dumb-jump package for jumping to package definitions within a project.
 (use-package dumb-jump
   :bind (("M-g o" . dumb-jump-go-other-window)
 	 ("M-g j" . dumb-jump-go)
@@ -151,38 +190,41 @@
 	 ("M-g z" . dumb-jump-go-prefer-external-other-window))
   :config (setq dumb-jump-selector 'helm)) ;; (setq dumb-jump-selector 'ivy)
 
-					;;Allow hooking into Trello with org files - set files below to avoid
-					;;'org-trello' being called for each org-mode buffer (since
-					;;'org-trello' is a minor mode of org).
+;; Allow hooking into Trello with org files - set files below to avoid
+;; 'org-trello' being called for each org-mode buffer (since
+;; 'org-trello' is a minor mode of org).
+
+;; Org-trello integration for boards. Must edit incl. files.
 ;;(use-package org-trello
 ;;  :config
 ;;  (custom-set-variables '(org-trello-files '("path/to/file1" "file2"))))
 
-					;;-----------------------Hooks---------------------------------------
-					;;Prog-mode-hook allows changes which will then be executed for all
-					;;programming modes (that are derived from 'prog-mode'.
-					;;One benefit of using this mode is that global minor modes no longer
-					;;have to maintain a long list of suitable major modes.
-					;;Instead, they can simply check if a mode is derived from one of the
-					;;base modes
+;; Hooks:
+;; Prog-mode-hook allows changes which will then be executed for all
+;; programming modes (that are derived from 'prog-mode').
+;; One benefit of using this mode is that global minor modes no longer
+;; have to maintain a long list of suitable major modes.
+;; Instead, they can simply check if a mode is derived from one of the
+;; base modes.
 (add-hook 'prog-mode-hook
 	  (lambda ()
 	    (interactive)
 	    (whitespace-mode 0)
-	    (setq whitespace-line-column 80)
-	   ;; (whitespace-mode 1)))
+	    ;;(setq whitespace-line-column 80)
+	    ;;(whitespace-mode 1)))
 ))
-					;;Disable emacs version control which is enabled by default.
-					;;This prevents emacs from doing extra work, however, we want it available
-					;;if we are not using with the Magit package.
+;; Disable Emacs version control which is enabled by default.
+;; This prevents Emacs from doing extra work, however, we want it available
+;; if we are not using the Magit package.
 (setq vc-handled-backends (delq 'Git vc-handled-backends))
 
-					;;-----------------------Bindings------------------------------------
-					;;To magically bind stuff, you can use C-x <ESC> <ESC> C-a C-k C-g
-					;;doing so requires you to first bind in interactive mode using
-					;;M-x global-set-key <RET> /key cmd/ <RET>
-					;;Alternatively bind in current maj. mode with local-set-key.
-					;;Allow 'C-S-d' (Control-Shift-d) to duplicate current line.
+;; Bindings:
+;; To magically bind stuff, you can use C-x <ESC> <ESC> C-a C-k C-g.
+;; doing so requires you to first bind in interactive mode using
+;; M-x global-set-key <RET> /key cmd/ <RET>.
+;; Alternatively bind in current maj. mode with local-set-key.
+
+;; Allow 'C-S-d' (Control-Shift-d) to duplicate current line.
 (defun duplicate-line ()
   (interactive)
   (save-mark-and-excursion
@@ -191,11 +233,13 @@
 
 (global-set-key (kbd "C-S-d") 'duplicate-line)
 
+;; Display line numbers in buffer globally, or in active buffer.
 (global-set-key (kbd "C-c g l n") 'global-display-line-numbers-mode)
 (global-set-key (kbd "C-c d l n") 'display-line-numbers-mode)
 
-					;;Allow 'C-S-j' to move a line up by one line.
-					;;Allow 'C-S-k' to move a line down by one line.
+;; Allow 'C-S-j' to move a line up by one line.
+;; Allow 'C-S-k' to move a line down by one line.
+;; Note the line with the cursor, as it will be dragged as well.
 (defun move-line-up ()
   (interactive)
   (let ((col (current-column)))
@@ -214,170 +258,36 @@
     (forward-line)
     (move-column col)))
 
-(define-key org-mode-map "\M-q" 'toggle-truncate-lines)
 (global-set-key (kbd "C-S-j") 'move-line-up)
 (global-set-key (kbd "C-S-k") 'move-line-down)
+
+;; Allow word wrap within Org mode.
+(define-key org-mode-map "\M-q" 'toggle-truncate-lines)
+
+;; TODO: Replace speedbar with treemacs after hydra configuration.
 (global-set-key (kbd "C-.") 'speedbar)
 
-;;Org configuration based on similar setup from http://doc.norang.ca/org-mode.html
-;; Begin Org setup stuff
-(if (boundp 'org-mode-user-lisp-path)
-    (add-to-list 'load-path org-mode-user-lisp-path)
-  (add-to-list 'load-path (expand-file-name "~/git/org-mode/lisp")))
-
-(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
-(require 'org)
-
-					;;Standard key bindings
-(global-set-key (kbd "C-c a") 'org-agenda) ;;Agenda
-(global-set-key (kbd "C-c l") 'org-store-link) ;;Store link for retrieval with C-c C-l
-(global-set-key (kbd "C-c b") 'org-iswitchb) ;;Switch to Org file
-
-(setq org-agenda-files (quote ("~/git/orgfiles"
-			       "~/git/orgfiles/p"
-			       "~/git/w")))
-
-(add-to-list 'auto-mode-alist '("\\.\\(org((|org_archive\\|txt\\)$" . org-mode))
-
-(global-unset-key (kbd "<f3>"))
-
-(global-set-key (kbd "<f10>") 'org-agenda)
-(global-set-key (kbd "<f5>") 'bh/org-todo)
-(global-set-key (kbd "<S-f5>") 'bh/widen)
-(global-set-key (kbd "<f7>") 'bh/set-truncate-lines)
-(global-set-key (kbd "<f8>") 'org-cycle-agenda-files)
-(global-set-key (kbd "<f9> <f9>") 'bh/show-org-agenda)
-(global-set-key (kbd "<f9> b") 'bbdb)
-(global-set-key (kbd "<f9> c") 'calendar)
-(global-set-key (kbd "<f9> f") 'boxquote-insert-file)
-(global-set-key (kbd "<f9> g") 'gnus)
-(global-set-key (kbd "<f9> h") 'bh/hide-other)
-(global-set-key (kbd "<f9> n") 'bh/toggle-next-task-display)
-
-(global-set-key (kbd "<f9> I") 'bh/punch-in)
-(global-set-key (kbd "<f9> O") 'bh/punch-out)
-
-(global-set-key (kbd "<f9> o") 'bh/make-org-scratch)
-
-(global-set-key (kbd "<f9> r") 'boxquote-region)
-(global-set-key (kbd "<f9> s") 'bh/switch-to-scratch)
-
-(global-set-key (kbd "<f9> t") 'bh/insert-inactive-timestamp)
-(global-set-key (kbd "<f9> T") 'bh/toggle-insert-inactive-timestamp)
-
-(global-set-key (kbd "<f9> v") 'visible-mode)
-(global-set-key (kbd "<f9> l") 'org-toggle-link-display)
-(global-set-key (kbd "<f9> SPC") 'bh/clock-in-last-task)
-(global-set-key (kbd "C-<f9>") 'previous-buffer)
-(global-set-key (kbd "M-<f9>") 'org-toggle-inline-images)
-(global-set-key (kbd "C-x n r") 'narrow-to-region)
-(global-set-key (kbd "C-<f10>") 'next-buffer)
-(global-set-key (kbd "<f11>") 'org-clock-goto)
-(global-set-key (kbd "C-<f11>") 'org-clock-in)
-(global-set-key (kbd "C-s-<f3>") 'bh/save-then-publish)
-(global-set-key (kbd "C-c c") 'org-capture)
-
-(defun bh/hide-other ()
-  (interactive)
-  (save-excursion
-    (org-back-to-heading 'invisible-ok)
-    (hide-other)
-    (org-cycle)
-    (org-cycle)
-    (org-cycle)))
-
-(defun bh/set-truncate-lines ()
-  "Toggle value of truncate-lines and refresh window display."
-  (interactive)
-  (setq truncate-lines (not truncate-lines))
-  ;; now refresh window display (an idiom from simple.el):
-  (save-excursion
-    (set-window-start (selected-window)
-                      (window-start (selected-window)))))
-
-(defun bh/make-org-scratch ()
-  (interactive)
-  (find-file "/tmp/publish/scratch.org")
-  (gnus-make-directory "/tmp/publish"))
-
-(defun bh/switch-to-scratch ()
-  (interactive)
-  (switch-to-buffer "*scratch*"))
-
-(setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
-
-(setq org-todo-keyword-faces
-      (quote (("TODO" :foreground "red" :weight bold)
-              ("NEXT" :foreground "blue" :weight bold)
-              ("DONE" :foreground "forest green" :weight bold)
-              ("WAITING" :foreground "orange" :weight bold)
-              ("HOLD" :foreground "magenta" :weight bold)
-              ("CANCELLED" :foreground "forest green" :weight bold)
-              ("MEETING" :foreground "forest green" :weight bold)
-              ("PHONE" :foreground "forest green" :weight bold))))
-
-(setq org-use-fast-todo-selection t)
-(setq org-treat-S-cursor-todo-selection-as-state-change nil)
-
-(setq org-todo-state-tags-triggers
-      (quote (("CANCELLED" ("CANCELLED" . t))
-              ("WAITING" ("WAITING" . t))
-              ("HOLD" ("WAITING") ("HOLD" . t))
-              (done ("WAITING") ("HOLD"))
-              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
-
-(setq org-directory "~/git/orgfiles")
-(setq org-default-notes-file "~/git/orgfiles/refile.org")
-
-;; I use C-c c to start capture mode
-(global-set-key (kbd "C-c c") 'org-capture)
-
-;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
-(setq org-capture-templates
-      (quote (("t" "todo" entry (file "~/git/orgfiles/refile.org")
-               "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-              ("r" "respond" entry (file "~/git/orgfiles/refile.org")
-               "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-              ("n" "note" entry (file "~/git/orgfiles/refile.org")
-               "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-              ("j" "Journal" entry (file+datetree "~/git/orgfiles/diary.org")
-               "* %?\n%U\n" :clock-in t :clock-resume t)
-              ("w" "org-protocol" entry (file "~/git/orgfiles/refile.org")
-               "* TODO Review %c\n%U\n" :immediate-finish t)
-              ("m" "Meeting" entry (file "~/git/orgfiles/refile.org")
-               "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-              ("p" "Phone call" entry (file "~/git/orgfiles/refile.org")
-               "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
-              ("h" "Habit" entry (file "~/git/orgfiles/refile.org")
-               "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
-
-;; End of Org setup stuff
-					;;Enable multiple cursors from the 'multiple-cursors'
-					;;package. Add key bindings for ease of use.
-					;;'C-g' can be used to quit multiple cursors mode.
-					;;'C-j' can be used to insert a new line, as <return> exits the mode.
+;; Enable multiple cursors from the 'multiple-cursors'
+;; package. Add key bindings for ease of use.
+;; 'C-g' can be used to quit multiple cursors mode.
+;; 'C-j' can be used to insert a new line, as <return> exits the mode.
 (use-package multiple-cursors
-  :bind (("C-|" . mc/edit-lines)
-	 ("C->" . mc/mark-next-like-this)
-	 ("C-<" . mc/mark-previous-like-this)
+  :bind (("C-|" . mc/edit-lines) ;; At cursor, mark each line up/down.
+	 ("C->" . mc/mark-next-like-this) ;; Start dropping cursor marks down.
+	 ("C-<" . mc/mark-previous-like-this) ;; Start shifting cursor marks up.
 	 ("C-C C-<" . mc/mark-all-like-this)
 	 ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
 
-					;;Remove the scrollbars globally for all frames as well as other
-					;;gross gui content.
+;; Remove the scrollbars globally for all frames as well as other
+;; gross gui content.
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 
-					;;Allow saving of registers etc
+;; Allow saving of registers, helm loc. bookmarks, etc.
 (desktop-save-mode 1)
 
-					;;Add formatting for LaTeX exports in org mode
-
+;; Add formatting for LaTeX exports in org mode.
 (add-to-list 'org-latex-classes
              '("adarticle"
                "\\documentclass{article}
@@ -397,3 +307,4 @@
                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                ("\\paragraph{%s}" . "\\paragraph*{%s}")
                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+;;; init.el ends here
