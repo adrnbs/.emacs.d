@@ -4,6 +4,7 @@
 
 ;;; Code:
 ;; Package Sources:
+;; ----------
 ;; Set package archive references as well as the priority per reference.
 ;; The higher the number, the more priority the archive has.
 (setq package-archives
@@ -16,43 +17,8 @@
 	("MELPA"         . 0)))
 (package-initialize)
 
-;; Manage temporary files that are generated from within Emacs.
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-
-;; Allow deleted files from Emacs to be moved to trash.
-(setq delete-by-moving-to-trash t)
-
-;; Configure references for other elisp files to be imported into init.el.
-(defconst user-init-dir
-  (cond ((boundp 'user-emacs-directory)
-	 user-emacs-directory)
-	((boundp 'user-init-directory)
-	 user-init-directory)
-	(t "~/.emacs.d/")))
-
-(defun load-user-file (file)
-  (interactive "f")
-  "Load a file in current user's configuration directory"
-  (load-file (expand-file-name file user-init-dir)))
-(load-user-file "org-mode.el") ;; Org mode/Org agenda configurations.
-
-;; Set font(s)
-(add-to-list 'default-frame-alist '(font . "Hack"))
-(set-face-attribute 'default nil
-		    ;;:family "Hack")
-		    :font "-unknown-Hack-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
-
-;; Remove restriction for upcase/downcase region.
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-
-;; Set column position display for buffer (l, c).
-(setq column-number-mode t)
-
 ;; Packages:
+;; ----------
 ;; Invoke 'use-package' package and set the default use-package-always-ensure
 ;; to t, to allow downloading of packages if they are not found on the machine.
 ;; For more information see GitHub project page:
@@ -68,7 +34,7 @@
     ;; projectile-pt initially.
     (use-package pt
       :bind (("C-c p" . 'projectile-pt)))
-    
+
     ;; PowerShell package for shell integration.
     (use-package powershell)
     (message "Using Windows environment configurations.")))
@@ -92,10 +58,6 @@
       (setq projectile-enable-caching t)
       :bind (("C-c p" . 'projectile-command-map)))
     (message "Using Linux environment configurations."))))
-
-
-;;; ----move to miscellaneous
-(show-paren-mode 1)
 
 ;; Flycheck for syntax checking.
 (use-package flycheck
@@ -151,7 +113,6 @@
 ;; Bindings are set here as the use-package does not directly support
 ;; unbinding of keys. More straight forward in this case to avoid
 ;; invoking use-package's :bind keyword.
-(global-unset-key (kbd "C-x c"))
 (use-package helm)
 
 ;; Use silver-searcher package specifically.
@@ -200,6 +161,7 @@
 ;;  (custom-set-variables '(org-trello-files '("path/to/file1" "file2"))))
 
 ;; Hooks:
+;; ----------
 ;; Prog-mode-hook allows changes which will then be executed for all
 ;; programming modes (that are derived from 'prog-mode').
 ;; One benefit of using this mode is that global minor modes no longer
@@ -219,6 +181,7 @@
 (setq vc-handled-backends (delq 'Git vc-handled-backends))
 
 ;; Bindings:
+;; ----------
 ;; To magically bind stuff, you can use C-x <ESC> <ESC> C-a C-k C-g.
 ;; doing so requires you to first bind in interactive mode using
 ;; M-x global-set-key <RET> /key cmd/ <RET>.
@@ -230,6 +193,8 @@
   (save-mark-and-excursion
     (beginning-of-line)
     (insert (thing-at-point 'line t))))
+
+(global-unset-key (kbd "C-x c"))
 
 (global-set-key (kbd "C-S-d") 'duplicate-line)
 
@@ -277,6 +242,48 @@
 	 ("C-<" . mc/mark-previous-like-this) ;; Start shifting cursor marks up.
 	 ("C-C C-<" . mc/mark-all-like-this)
 	 ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
+
+;; Miscellaneous:
+;; ----------
+;; Specific items that don't fall under other categories.
+;; Manage temporary files that are generated from within Emacs.
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
+;; Allow deleted files from Emacs to be moved to trash.
+(setq delete-by-moving-to-trash t)
+
+;; Configure references for other elisp files to be imported into init.el.
+(defconst user-init-dir
+  (cond ((boundp 'user-emacs-directory)
+	 user-emacs-directory)
+	((boundp 'user-init-directory)
+	 user-init-directory)
+	(t "~/.emacs.d/")))
+
+(defun load-user-file (file)
+  (interactive "f")
+  "Load a file in current user's configuration directory"
+  (load-file (expand-file-name file user-init-dir)))
+(load-user-file "org-mode.el") ;; Org mode/Org agenda configurations.
+
+;; Set font(s)
+(add-to-list 'default-frame-alist '(font . "Hack"))
+(set-face-attribute 'default nil
+		    ;;:family "Hack")
+		    :font "-unknown-Hack-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
+
+;; Paren matching globally.
+(show-paren-mode 1)
+
+;; Remove restriction for upcase/downcase region.
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
+;; Set column position display for buffer (l, c).
+(setq column-number-mode t)
 
 ;; Remove the scrollbars globally for all frames as well as other
 ;; gross gui content.

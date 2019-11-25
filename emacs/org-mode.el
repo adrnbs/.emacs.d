@@ -155,7 +155,7 @@
 ;; Use full outline paths for refile targets - we file directly with Helm
 (setq org-refile-use-outline-path t)
 
-;; Targets complete directly with Jelm
+;; Targets complete directly with Helm.
 (setq org-outline-path-complete-in-steps nil)
 
 ;; Allow refile to create parent tasks with confirmation
