@@ -74,6 +74,15 @@
   :config
   (global-company-mode 1))
 
+;; Allow HTTP requests from Emacs.
+;; See https://github.com/pashky/restclient.el
+(use-package restclient
+  :config
+  (setq restclient-mode t))
+
+(use-package company-restclient)
+(use-package restclient-helm)
+
 ;; Install and load rust-mode for editing code w/ indents and rustfmt.
 ;; Rust-format-buffer will format code with rustfmt if installed
 ;; (occurs upon buffer saving).
