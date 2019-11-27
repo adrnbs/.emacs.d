@@ -37,7 +37,8 @@
 
     ;; PowerShell package for shell integration.
     (use-package powershell)
-    (message "Using Windows environment configurations.")))
+    (message "Using Windows environment configurations.")
+    (message "Make sure manual dependencies are installed (fonts, etc.)")))
  ((string-equal system-type "darwin") ;; Mac
   (progn
     ;; Projectile for non Windows.
