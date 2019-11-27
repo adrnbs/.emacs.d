@@ -58,6 +58,14 @@
       (setq projectile-enable-caching t)
       :bind (("C-c p" . 'projectile-command-map)))
     (message "Using Linux environment configurations."))))
+;; Window-numbering for improved switching/assignment.
+;; See https://github.com/nschum/window-numbering.el
+(use-package window-numbering
+  :init (window-numbering-mode))
+;; Invoke function for static placement.
+;; TODO: Specifics for OS env? Mail?
+;; (setq window-numbering-assign-func
+      ;; (lambda () (when (equal (buffer-name) "*Scratch*") 9)))
 
 ;; Flycheck for syntax checking.
 (use-package flycheck
@@ -78,7 +86,7 @@
 ;; See https://github.com/pashky/restclient.el
 (use-package restclient
   :config
-  (setq restclient-mode t))
+  (setq restclient-mode 1))
 
 (use-package company-restclient)
 (use-package restclient-helm)
@@ -180,10 +188,13 @@
 (add-hook 'prog-mode-hook
 	  (lambda ()
 	    (interactive)
-	    (whitespace-mode 0)
-	    ;;(setq whitespace-line-column 80)
-	    ;;(whitespace-mode 1)))
-))
+	    ;;(whitespace-mode nil)
+	    (setq-local whitespace-line-column 120)
+	    (whitespace-mode 1)))
+
+;; Limit specific whitespace identifiers.
+(setq whitespace-style (quote (face spaces tabs newline space-marl tab-mark newline-mark)))
+
 ;; Disable Emacs version control which is enabled by default.
 ;; This prevents Emacs from doing extra work, however, we want it available
 ;; if we are not using the Magit package.
