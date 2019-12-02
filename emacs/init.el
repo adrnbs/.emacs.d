@@ -68,6 +68,9 @@
 ;; (setq window-numbering-assign-func
       ;; (lambda () (when (equal (buffer-name) "*Scratch*") 9)))
 
+;; Allow ob-http for Org mode http requests.
+(use-package ob-http)
+
 ;; Flycheck for syntax checking.
 (use-package flycheck
   :init (global-flycheck-mode))
@@ -248,7 +251,7 @@
 (global-set-key (kbd "C-S-k") 'move-line-down)
 
 ;; Allow word wrap within Org mode.
-(define-key org-mode-map "\M-q" 'toggle-truncate-lines)
+;; (define-key org-mode-map "\M-q" 'toggle-truncate-lines)
 
 ;; TODO: Replace speedbar with treemacs after hydra configuration.
 (global-set-key (kbd "C-.") 'speedbar)
