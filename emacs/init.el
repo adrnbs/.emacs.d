@@ -69,6 +69,7 @@
       ;; (lambda () (when (equal (buffer-name) "*Scratch*") 9)))
 
 ;; Allow ob-http for Org mode http requests.
+;; See https://emacs.stackexchange.com/questions/2427/how-to-test-rest-api-with-emacs
 (use-package ob-http)
 
 ;; Flycheck for syntax checking.
