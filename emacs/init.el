@@ -271,6 +271,9 @@
 ;; Miscellaneous:
 ;; ----------
 ;; Specific items that don't fall under other categories.
+;; Include addn. org langs.
+(require 'ob-ditaa)
+
 ;; Manage temporary files that are generated from within Emacs.
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
