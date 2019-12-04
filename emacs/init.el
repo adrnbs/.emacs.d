@@ -227,6 +227,13 @@
 (global-set-key (kbd "C-c g l n") 'global-display-line-numbers-mode)
 (global-set-key (kbd "C-c d l n") 'display-line-numbers-mode)
 
+;; Macro for larger buffers by 5.
+(fset 'expand-height
+      "\C-u5\C-x^")
+
+;; Keybind the macro.
+(global-set-key (kbd "C-c e h") 'expand-height)
+
 ;; Allow 'C-S-j' to move a line up by one line.
 ;; Allow 'C-S-k' to move a line down by one line.
 ;; Note the line with the cursor, as it will be dragged as well.
