@@ -138,6 +138,10 @@
 ;; invoking use-package's :bind keyword.
 (use-package helm)
 
+;; Graphviz and PlantUML for org graphics.
+(use-package graphviz-dot-mode)
+(use-package plantuml-mode)
+
 ;; Use silver-searcher package specifically.
 ;; See https://github.com/syohex/emacs-helm-ag.
 (use-package helm-ag
@@ -282,9 +286,6 @@
 ;; Miscellaneous:
 ;; ----------
 ;; Specific items that don't fall under other categories.
-;; Include addn. org langs.
-(require 'ob-ditaa)
-
 ;; Manage temporary files that are generated from within Emacs.
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
