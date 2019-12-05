@@ -37,6 +37,7 @@
 
     ;; PowerShell package for shell integration.
     (use-package powershell)
+
     (message "Using Windows environment configurations.")
     (message "Make sure manual dependencies are installed (fonts, etc.)")))
  ((string-equal system-type "darwin") ;; Mac
@@ -163,6 +164,9 @@
   (setq auto-package-update-old-versions t)
   (setq auto-package-update-hide-results t)
   (auto-package-update-maybe))
+
+;; Orgmode.
+(use-package org)
 
 ;; Use dumb-jump package for jumping to package definitions within a project.
 (use-package dumb-jump
