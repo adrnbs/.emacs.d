@@ -152,17 +152,11 @@
 (setq org-refile-targets (quote ((nil :maxlevel . 9)
 				 (org-agenda-files :maxlevel .9))))
 
-;; Use full outline paths for refile targets - we file directly with Helm
+;; Use full outline paths for refile targets
 (setq org-refile-use-outline-path t)
-
-;; Targets complete directly with Helm.
-(setq org-outline-path-complete-in-steps nil)
 
 ;; Allow refile to create parent tasks with confirmation
 (setq org-refile-allow-creating-parent-nodes (quote confirm))
-
-;; Use Helm for both buffer and file completion
-(setq org-completion-use-ido nil)
 
 ;; Use the current window for indirect buffer display
 (setq org-indirect-buffer-display 'current-window)

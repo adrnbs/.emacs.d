@@ -69,9 +69,32 @@
 ;; (setq window-numbering-assign-func
       ;; (lambda () (when (equal (buffer-name) "*Scratch*") 9)))
 
+;; Ivy.
+(use-package ivy :ensure t
+  :diminish (ivy-mode . "")
+  :bind
+  (:map ivy-mode-map
+   ("C-'" . ivy-avy))
+  :config
+  (ivy-mode 1)
+  ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
+  (setq ivy-use-virtual-buffers t)
+  ;; number of result lines to display
+  (setq ivy-height 10)
+  ;; does not count candidates
+  (setq ivy-count-format "")
+  ;; no regexp by default
+  (setq ivy-initial-inputs-alist nil)
+  ;; configure regexp engine.
+  (setq ivy-re-builders-alist
+	;; allow input not in order
+        '((t   . ivy--regex-ignore-order))))
+
 ;; Allow ob-http for Org mode http requests.
 ;; See https://emacs.stackexchange.com/questions/2427/how-to-test-rest-api-with-emacs
 (use-package ob-http)
+
+(use-package bbdb)
 
 ;; Flycheck for syntax checking.
 (use-package flycheck
@@ -95,7 +118,6 @@
   (setq restclient-mode 1))
 
 (use-package company-restclient)
-(use-package restclient-helm)
 
 ;; Install and load rust-mode for editing code w/ indents and rustfmt.
 ;; Rust-format-buffer will format code with rustfmt if installed
@@ -128,32 +150,9 @@
 	 ("C-S-g" . drag-stuff-left)
 	 ("C-S-h" . drag-stuff-right)))
 
-;; Use combination of projectile and helm to fuzzy file search inside and
-;; outside of projects. 'C-x C-f' can be invoked to open a file like
-;; normal, however it will have autocomplete options. 'C-c p f' can be used
-;; while inside of a project, and does not require the full path.
-;; While invoked, 'C-j' is used to complete instead of <TAB>.
-;; Bindings are set here as the use-package does not directly support
-;; unbinding of keys. More straight forward in this case to avoid
-;; invoking use-package's :bind keyword.
-(use-package helm)
-
 ;; Graphviz and PlantUML for org graphics.
 (use-package graphviz-dot-mode)
 (use-package plantuml-mode)
-
-;; Use silver-searcher package specifically.
-;; See https://github.com/syohex/emacs-helm-ag.
-(use-package helm-ag
-  :bind (("C-c h" . 'helm-command-prefix)
-	 ("C-c s b" . 'helm-filtered-bookmarks)
-	 ("M-x" . 'helm-M-x)
-	 ("C-x C-f" . 'helm-find-files)))
-(helm-autoresize-mode 1)
-
-;; Allow fuzzy matching so you can word vomit.
-(setq helm-M-x-fuzzy-match t)
-(helm-mode 1)
 
 ;; Nice colors.
 (use-package spacemacs-theme)
@@ -173,13 +172,13 @@
 (use-package org)
 
 ;; Use dumb-jump package for jumping to package definitions within a project.
-(use-package dumb-jump
-  :bind (("M-g o" . dumb-jump-go-other-window)
-	 ("M-g j" . dumb-jump-go)
-	 ("M-g i" . dumb-jump-go-prompt)
-	 ("M-g x" . dumb-jump-go-prefer-external)
-	 ("M-g z" . dumb-jump-go-prefer-external-other-window))
-  :config (setq dumb-jump-selector 'helm)) ;; (setq dumb-jump-selector 'ivy)
+;; (use-package dumb-jump
+;;   :bind (("M-g o" . dumb-jump-go-other-window)
+;; 	 ("M-g j" . dumb-jump-go)
+;; 	 ("M-g i" . dumb-jump-go-prompt)
+;; 	 ("M-g x" . dumb-jump-go-prefer-external)
+;; 	 ("M-g z" . dumb-jump-go-prefer-external-other-window))
+;;   :config (setq dumb-jump-selector 'ivy)) ;; (setq dumb-jump-selector 'ivy)
 
 ;; Allow hooking into Trello with org files - set files below to avoid
 ;; 'org-trello' being called for each org-mode buffer (since
