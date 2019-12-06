@@ -2,6 +2,7 @@
 ;;; Commentary:
 ;;; Emacs startup file; contains bindings, env settings, repo sources, etc.
 
+
 ;;; Code:
 ;; Package Sources:
 ;; ----------
@@ -69,26 +70,43 @@
 ;; (setq window-numbering-assign-func
       ;; (lambda () (when (equal (buffer-name) "*Scratch*") 9)))
 
-;; Ivy.
-(use-package ivy :ensure t
-  :diminish (ivy-mode . "")
-  :bind
-  (:map ivy-mode-map
-   ("C-'" . ivy-avy))
+;; Swap to Counsel instead of using Helm.
+;; Ivy/Swiper are depen. of Counsel.
+(use-package counsel
   :config
-  (ivy-mode 1)
-  ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
-  (setq ivy-use-virtual-buffers t)
-  ;; number of result lines to display
-  (setq ivy-height 10)
-  ;; does not count candidates
-  (setq ivy-count-format "")
-  ;; no regexp by default
-  (setq ivy-initial-inputs-alist nil)
-  ;; configure regexp engine.
-  (setq ivy-re-builders-alist
-	;; allow input not in order
-        '((t   . ivy--regex-ignore-order))))
+  (ivy-mode 1) ;; Enable Ivy.
+  (setq ivy-use-virtual-buffers t) ;; Add recent files and/or bookmarks to ivy-switch-buffer.
+  (setq ivy-height 10) ;; Allow a hard height to be set for buffer.
+  (setq ivy-count-format "(%d/%d) ") ;; Changes the format of the number of results.
+  :bind (("\C-s" . 'swiper)
+	 ("M-x" . 'counsel-M-x)
+	 ("C-x C-f" . 'counsel-find-file)
+	 ("<f1> f" . 'counsel-describe-function)
+	 ("<f1> v" . 'counsel-describe-variable)
+	 ("<f1> l" . 'counsel-find-library)
+	 ("<f1> i" . 'counsel-info-lookup-symbol)
+	 ("<f1> u" . 'counsel-unicode-char)
+	 ("C-c C-r" . 'ivy-resume)
+
+	 ("C-c g" . 'counsel-git)
+	 ("C-c j" . 'counsel-git-grep)
+	 ("C-c k" . 'counsel-ag)
+	 ("C-x l" . 'counsel-locate)
+	 ("C-S-o" . 'counsel-rhythmbox)))
+
+;; Set options during execution of counsel-find-file.
+(ivy-set-actions
+ 'counsel-find-file
+ '(("b" counsel-find-file-cd-bookmark-action "cd bookmark")
+   ("x" counsel-find-file-extern "open externally")
+   ("d" delete-file "delete")
+   ("r" counsel-find-file-as-root "open as root")))
+
+;; Set actions when running C-x b.
+(ivy-set-actions
+ 'ivy-switch-buffer
+ '(("k" kill-buffer "kill")
+  ("r" ivy--rename-buffer-action "rename")))
 
 ;; Allow ob-http for Org mode http requests.
 ;; See https://emacs.stackexchange.com/questions/2427/how-to-test-rest-api-with-emacs
@@ -266,7 +284,7 @@
 (global-set-key (kbd "C-S-k") 'move-line-down)
 
 ;; Allow word wrap within Org mode.
-;; (define-key org-mode-map "\M-q" 'toggle-truncate-lines)
+(define-key org-mode-map "\M-q" 'toggle-truncate-lines)
 
 ;; TODO: Replace speedbar with treemacs after hydra configuration.
 (global-set-key (kbd "C-.") 'speedbar)
