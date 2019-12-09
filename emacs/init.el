@@ -2,7 +2,6 @@
 ;;; Commentary:
 ;;; Emacs startup file; contains bindings, env settings, repo sources, etc.
 
-
 ;;; Code:
 ;; Package Sources:
 ;; ----------
@@ -26,6 +25,8 @@
 ;; https://github.com/jwiegley/use-package/
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
+(add-to-list 'load-path "~/git/org-mode/lisp")
+(add-to-list 'load-path "~/git/org-mode/contrib/lisp" t)
 
 ;; OS specifier for certain packages.
 (cond
@@ -187,7 +188,9 @@
   (auto-package-update-maybe))
 
 ;; Orgmode.
-(use-package org)
+;;(use-package org)
+(use-package org-bullets)
+(add-hook 'org-mode-hook 'org-bullets-mode)
 
 ;; Use dumb-jump package for jumping to package definitions within a project.
 ;; (use-package dumb-jump
