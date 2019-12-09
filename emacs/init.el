@@ -196,7 +196,7 @@
 ;; 	 ("M-g i" . dumb-jump-go-prompt)
 ;; 	 ("M-g x" . dumb-jump-go-prefer-external)
 ;; 	 ("M-g z" . dumb-jump-go-prefer-external-other-window))
-;;   :config (setq dumb-jump-selector 'ivy)) ;; (setq dumb-jump-selector 'ivy)
+;;   :config (setq dumb-jump-selector 'ivy))
 
 ;; Allow hooking into Trello with org files - set files below to avoid
 ;; 'org-trello' being called for each org-mode buffer (since
