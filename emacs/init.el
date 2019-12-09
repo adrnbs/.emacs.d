@@ -249,8 +249,8 @@
 (global-set-key (kbd "C-S-d") 'duplicate-line)
 
 ;; Display line numbers in buffer globally, or in active buffer.
-(global-set-key (kbd "C-c g l n") 'global-display-line-numbers-mode)
-(global-set-key (kbd "C-c d l n") 'display-line-numbers-mode)
+(global-set-key (kbd "C-c d l g") 'global-display-line-numbers-mode) ;; Display lines global
+(global-set-key (kbd "C-c d l b") 'display-line-numbers-mode) ;; Display lines buffer
 
 ;; Macro for larger buffers by 5.
 (fset 'expand-height
