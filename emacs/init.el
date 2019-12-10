@@ -25,8 +25,8 @@
 ;; https://github.com/jwiegley/use-package/
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
+
 (add-to-list 'load-path "~/git/org-mode/lisp")
-(add-to-list 'load-path "~/git/org-mode/contrib/lisp" t)
 
 ;; OS specifier for certain packages.
 (cond
