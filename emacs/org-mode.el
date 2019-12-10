@@ -149,8 +149,8 @@
 
 ;;;; Refile setup
 ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-;; (setq org-refile-targets (quote ((nil :maxlevel . 9)
-;; 				 (org-agenda-files :maxlevel .9))))
+ (setq org-refile-targets (quote ((nil :maxlevel . 9)
+ 				 (org-agenda-files :maxlevel . 9))))
 
 ;; Use full outline paths for refile targets
 (setq org-refile-use-outline-path t)
@@ -164,7 +164,7 @@
 ;;;; Refile settings
 ;; Exclude DONE state tasks from refile targets
 (defun bh/verify-refile-target ()
-  "Exclude todo keywords eith a done state from refile targets."
+  "Exclude todo keywords with a done state from refile targets."
   (not (member (nth 2 (org-heading-components)) org-done-keywords)))
 
 (setq org-refile-target-verify-function 'bh/verify-refile-target)
