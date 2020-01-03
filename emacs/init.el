@@ -219,12 +219,16 @@
 ;; have to maintain a long list of suitable major modes.
 ;; Instead, they can simply check if a mode is derived from one of the
 ;; base modes.
-(add-hook 'prog-mode-hook
-	  (lambda ()
-	    (interactive)
-	    ;;(whitespace-mode nil)
-	    (setq-local whitespace-line-column 120)
-	    (whitespace-mode 1)))
+(defun custom-prog-mode ()
+  (lambda ()
+    (setq display-line-numbers 'relative)
+    (interactive)
+    ;;(whitespace-mode nil)
+    (setq-local whitespace-line-column 120)
+    (whitespace-mode 1)))
+
+(add-hook 'prog-mode-hook 'custom-prog-mode)
+(add-hook 'yaml-mode-hook 'custom-prog-mode)
 
 ;; Limit specific whitespace identifiers.
 (setq whitespace-style (quote (face spaces tabs newline space-marl tab-mark newline-mark)))
