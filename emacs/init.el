@@ -160,6 +160,11 @@
 (add-hook 'yaml-mode-hook
 	  '(lambda () (define-key yaml-mode-map "<RET>" 'newline-and-indent)))
 
+;; Clojure editing mode integration.
+(use-package clojure-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode)))
+
 ;; Use drag-stuff to manipulate highlighted blocks in global mode(s).
 (use-package drag-stuff
   :config
@@ -219,16 +224,17 @@
 ;; have to maintain a long list of suitable major modes.
 ;; Instead, they can simply check if a mode is derived from one of the
 ;; base modes.
-(defun custom-prog-mode ()
-  (lambda ()
-    (setq display-line-numbers 'relative)
-    (interactive)
-    ;;(whitespace-mode nil)
-    (setq-local whitespace-line-column 120)
-    (whitespace-mode 1)))
+(add-hook 'prog-mode-hook
+	    (lambda ()
+	      (display-line-numbers-mode 1)
+	      (interactive)
+	      ;;(whitespace-mode nil)
+	      (setq-local whitespace-line-column 120)
+	      (whitespace-mode 1)))
 
-(add-hook 'prog-mode-hook 'custom-prog-mode)
-(add-hook 'yaml-mode-hook 'custom-prog-mode)
+(add-hook 'yaml-mode-hook
+	  (lambda ()
+	    (display-line-numbers-mode 1)))
 
 ;; Limit specific whitespace identifiers.
 (setq whitespace-style (quote (face spaces tabs newline space-marl tab-mark newline-mark)))
@@ -346,6 +352,17 @@
 ;; Remove restriction for upcase/downcase region.
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
+
+;; Invoke powerline
+;; Installed using: .emacs.d/vendor
+;; git clone git://github.com/jonathanchu/emacs-powerline.git
+(setq powerline-arrow-shape 'arrow) ;; default
+;; (setq powerline-arrow-shape 'curve)
+;; (setq powerline-arrow-shape 'arrow14) ;; best for small fonts
+;; Change mode-line color
+;; (custom-set-faces
+;; '(mode-line ((t (:foreground "#030303" :background "#bdbdbd" :box nil))))
+;; '(mode-line-inactive ((t (:foreground "#f9f9f9" :background "#666666" :box nil)))))
 
 ;; Set column position display for buffer (l, c).
 (setq column-number-mode t)
