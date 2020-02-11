@@ -71,6 +71,39 @@
 ;; (setq window-numbering-assign-func
       ;; (lambda () (when (equal (buffer-name) "*Scratch*") 9)))
 
+(use-package hydra)
+(defhydra hydra-buffer-menu (:color pink
+                             :hint nil)
+  "
+^Mark^             ^Unmark^           ^Actions^          ^Search
+^^^^^^^^-----------------------------------------------------------------
+_m_: mark          _u_: unmark        _x_: execute       _R_: re-isearch
+_s_: save          _U_: unmark up     _b_: bury          _I_: isearch
+_d_: delete        ^ ^                _g_: refresh       _O_: multi-occur
+_D_: delete up     ^ ^                _T_: files only: % -28`Buffer-menu-files-only
+_~_: modified
+"
+  ("m" Buffer-menu-mark)
+  ("u" Buffer-menu-unmark)
+  ("U" Buffer-menu-backup-unmark)
+  ("d" Buffer-menu-delete)
+  ("D" Buffer-menu-delete-backwards)
+  ("s" Buffer-menu-save)
+  ("~" Buffer-menu-not-modified)
+  ("x" Buffer-menu-execute)
+  ("b" Buffer-menu-bury)
+  ("g" revert-buffer)
+  ("T" Buffer-menu-toggle-files-only)
+  ("O" Buffer-menu-multi-occur :color blue)
+  ("I" Buffer-menu-isearch-buffers :color blue)
+  ("R" Buffer-menu-isearch-buffers-regexp :color blue)
+  ("c" nil "cancel")
+  ("v" Buffer-menu-select "select" :color blue)
+  ("o" Buffer-menu-other-window "other-window" :color blue)
+  ("q" quit-window "quit" :color blue))
+
+(define-key Buffer-menu-mode-map "." 'hydra-buffer-menu/body)
+
 ;; Swap to Counsel instead of using Helm.
 ;; Ivy/Swiper are depen. of Counsel.
 (use-package counsel
@@ -94,6 +127,83 @@
 	 ("C-c k" . 'counsel-ag)
 	 ("C-x l" . 'counsel-locate)
 	 ("C-S-o" . 'counsel-rhythmbox)))
+
+;; Treemacs and configuration options.
+(use-package treemacs
+  :ensure t
+  :defer t
+  :init
+  (with-eval-after-load 'winum
+    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+  :config
+  (progn
+    (setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
+          treemacs-deferred-git-apply-delay      0.5
+          treemacs-directory-name-transformer    #'identity
+          treemacs-display-in-side-window        t
+          treemacs-eldoc-display                 t
+          treemacs-file-event-delay              5000
+          treemacs-file-extension-regex          treemacs-last-period-regex-value
+          treemacs-file-follow-delay             0.2
+          treemacs-file-name-transformer         #'identity
+          treemacs-follow-after-init             t
+          treemacs-git-command-pipe              ""
+          treemacs-goto-tag-strategy             'refetch-index
+          treemacs-indentation                   2
+          treemacs-indentation-string            " "
+          treemacs-is-never-other-window         nil
+          treemacs-max-git-entries               5000
+          treemacs-missing-project-action        'ask
+          treemacs-no-png-images                 nil
+          treemacs-no-delete-other-windows       t
+          treemacs-project-follow-cleanup        nil
+          treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+          treemacs-position                      'left
+          treemacs-recenter-distance             0.1
+          treemacs-recenter-after-file-follow    nil
+          treemacs-recenter-after-tag-follow     nil
+          treemacs-recenter-after-project-jump   'always
+          treemacs-recenter-after-project-expand 'on-distance
+          treemacs-show-cursor                   nil
+          treemacs-show-hidden-files             t
+          treemacs-silent-filewatch              nil
+          treemacs-silent-refresh                nil
+          treemacs-sorting                       'alphabetic-asc
+          treemacs-space-between-root-nodes      t
+          treemacs-tag-follow-cleanup            t
+          treemacs-tag-follow-delay              1.5
+          treemacs-width                         35)
+
+    ;; The default width and height of the icons is 22 pixels. If you are
+    ;; using a Hi-DPI display, uncomment this to double the icon size.
+    ;;(treemacs-resize-icons 44)
+
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    (treemacs-fringe-indicator-mode t)
+    (pcase (cons (not (null (executable-find "git")))
+                 (not (null treemacs-python-executable)))
+      (`(t . t)
+       (treemacs-git-mode 'deferred))
+      (`(t . _)
+       (treemacs-git-mode 'simple))))
+  :bind
+  (:map global-map
+        ("M-0"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag)))
+
+(use-package treemacs-icons-dired
+  :after treemacs dired
+  :ensure t
+  :config (treemacs-icons-dired-mode))
+
+(use-package treemacs-magit
+  :after treemacs magit
+  :ensure t)
 
 ;; Set options during execution of counsel-find-file.
 (ivy-set-actions
@@ -161,7 +271,7 @@
 	  '(lambda () (define-key yaml-mode-map "<RET>" 'newline-and-indent)))
 
 ;; Clojure editing mode integration.
-(use-package clojure-mode
+(use-package cider
   :config
   (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode)))
 
@@ -197,24 +307,6 @@
 ;;(use-package org)
 (use-package org-bullets)
 (add-hook 'org-mode-hook 'org-bullets-mode)
-
-;; Use dumb-jump package for jumping to package definitions within a project.
-;; (use-package dumb-jump
-;;   :bind (("M-g o" . dumb-jump-go-other-window)
-;; 	 ("M-g j" . dumb-jump-go)
-;; 	 ("M-g i" . dumb-jump-go-prompt)
-;; 	 ("M-g x" . dumb-jump-go-prefer-external)
-;; 	 ("M-g z" . dumb-jump-go-prefer-external-other-window))
-;;   :config (setq dumb-jump-selector 'ivy))
-
-;; Allow hooking into Trello with org files - set files below to avoid
-;; 'org-trello' being called for each org-mode buffer (since
-;; 'org-trello' is a minor mode of org).
-
-;; Org-trello integration for boards. Must edit incl. files.
-;;(use-package org-trello
-;;  :config
-;;  (custom-set-variables '(org-trello-files '("path/to/file1" "file2"))))
 
 ;; Hooks:
 ;; ----------
@@ -299,9 +391,6 @@
 
 ;; Allow word wrap within Org mode.
 (define-key org-mode-map "\M-q" 'toggle-truncate-lines)
-
-;; TODO: Replace speedbar with treemacs after hydra configuration.
-(global-set-key (kbd "C-.") 'speedbar)
 
 ;; Enable multiple cursors from the 'multiple-cursors'
 ;; package. Add key bindings for ease of use.

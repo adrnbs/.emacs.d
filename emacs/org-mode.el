@@ -55,8 +55,8 @@
 (global-set-key (kbd "M-<f9>") 'org-toggle-inline-images)
 (global-set-key (kbd "C-x n r") 'narrow-to-region)
 (global-set-key (kbd "C-<f10>") 'next-buffer)
-(global-set-key (kbd "<f11>") 'org-clock-goto)
-(global-set-key (kbd "C-<f11>") 'org-clock-in)
+(global-set-key (kbd "<f6>") 'org-clock-goto)
+(global-set-key (kbd "C-<f6>") 'org-clock-in)
 (global-set-key (kbd "C-s-<f3>") 'bh/save-then-publish)
 (global-set-key (kbd "C-c c") 'org-capture)
 
@@ -1168,7 +1168,7 @@ so change the default 'F' binding in the agenda to allow both"
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(org-mode-line-clock ((t (:background "grey75" :foreground "red" :box (:line-width -1 :style released-button)))) t))
+ '(org-mode-line-clock ((t (:background "grey75" :foreground "pink" :box (:line-width -1 :style released-button)))) t))
 
 ;; Keep tasks with dates on the global todo lists
 (setq org-agenda-todo-ignore-with-date nil)
@@ -1495,7 +1495,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(org-mode-line-clock ((t (:foreground "red" :box (:line-width -1 :style released-button)))) t))
+ '(org-mode-line-clock ((t (:foreground "pink" :box (:line-width -1 :style released-button)))) t))
 
 (defun bh/prepare-meeting-notes ()
   "Prepare meeting notes for email
