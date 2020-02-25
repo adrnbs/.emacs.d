@@ -143,7 +143,6 @@ _~_: modified
           treemacs-display-in-side-window        t
           treemacs-eldoc-display                 t
           treemacs-file-event-delay              5000
-          treemacs-file-extension-regex          treemacs-last-period-regex-value
           treemacs-file-follow-delay             0.2
           treemacs-file-name-transformer         #'identity
           treemacs-follow-after-init             t
@@ -204,6 +203,27 @@ _~_: modified
 (use-package treemacs-magit
   :after treemacs magit
   :ensure t)
+
+(use-package all-the-icons)
+
+(use-package page-break-lines)
+
+(use-package dockerfile-mode
+    :config
+  (add-to-list 'auto-mode-alist '("\\dockerfile'" . dockerfile-mode)))
+
+;; Dashboard setup.
+;;  (use-package dashboard
+;;    :ensure t
+;;    :init
+;;    (dashboard-setup-startup-hook)
+;;    (setq dashboard-items '(
+;;                (recents . 5)
+;;                (projects . 10)
+;;                ))
+;;    (setq dashboard-banner-logo-title "")
+;;    (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png"))
+;;    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
 ;; Set options during execution of counsel-find-file.
 (ivy-set-actions
