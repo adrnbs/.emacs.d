@@ -309,9 +309,13 @@ _~_: modified
 (use-package plantuml-mode)
 
 ;; Nice colors.
-(use-package spacemacs-theme
-  :defer t
-  :init (load-theme 'spacemacs-dark t))
+(use-package dracula-theme)
+
+;;(use-package gruber-darker-theme)
+
+;;(use-package spacemacs-theme
+;;  :defer t
+;;  :init (load-theme 'spacemacs-dark t))
 
 ;; Groovy editing mode integration.
 (use-package groovy-mode)
