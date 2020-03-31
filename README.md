@@ -13,7 +13,7 @@ $ cd org-mode/
 $ make autoloads
 ```
 
-If you are running on Windows, you will need make installed via something like Cygwin packages. Otherwise `apt-get install make`.
+If you are running on Windows, you will need make installed via something like Cygwin packages. Otherwise `apt-get install make`. Please see https://orgmode.org/manual/Installation.html for more information.
 
 # Other information
 The `.emacs.d/lisp/org-mode.el` include which is referenced in init.el requires some other setup, and will error if you attempt to use org-mode without the subdirectories created. This can be remedied by creating them in file explorer or executing the following:
