@@ -1,8 +1,8 @@
 # Dotfiles for emacs
 
-After cloning the repository, within emacs execute `M-x(alt + x) load-file RET (enter) getStarted.el`, with a fully-fledged path e.g. ~/.emacs.d/getStarted.el. This will import the repository hooks for Melpa.
+After cloning the repository, within emacs execute `M-x(alt + x) load-file RET (enter) getStarted.el`, with a fully-fledged path e.g. ~/.emacs/getStarted.el. This will import the repository hooks for Melpa.
 
-After hooking into Melpa, run `M-x package-refresh-contents RET`. After refreshing, run `M-x package-install RET use-package`. Once use-package is installed, you can load-file on init.el e.g. `M-x load-file RET ~/.emacs.d/init.el`. If you are met with warning messages, it is most likely due to org-mode dependencies not being cloned.
+After hooking into Melpa, run `M-x package-refresh-contents RET`. After refreshing, run `M-x package-install RET use-package`. Once use-package is installed, you can load-file on init.el e.g. `M-x load-file RET ~/.emacs/init.el`. If you are met with warning messages, it is most likely due to org-mode dependencies not being cloned.
 
 # Cloning org-mode dependencies
 If you are running this setup with my dockerfile, this will happen automatically. But if you are not running it in a container:
@@ -16,7 +16,7 @@ $ make autoloads
 If you are running on Windows, you will need make installed via something like Cygwin packages. Otherwise `apt-get install make`. Please see https://orgmode.org/manual/Installation.html for more information.
 
 # Other information
-The `.emacs.d/lisp/org-mode.el` include which is referenced in init.el requires some other setup, and will error if you attempt to use org-mode without the subdirectories created. This can be remedied by creating them in file explorer or executing the following:
+The `.emacs/lisp/org-mode.el` include which is referenced in init.el requires some other setup, and will error if you attempt to use org-mode without the subdirectories created. This can be remedied by creating them in file explorer or executing the following:
 ```
 mkdir ~/git/orgbinder
 mkdir ~/git/orgfiles
