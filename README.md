@@ -9,7 +9,8 @@ If you are running this setup with my dockerfile, this will happen automatically
 ```$ cd ~/git/
  $ git clone https://code.orgmode.org/bzg/org-mode.git
  $ cd org-mode/
- $ make autoloads```
+ $ make autoloads
+```
 
 If you are running on Windows, you will need make installed via something like Cygwin packages. Otherwise `apt-get install make`.
 
@@ -17,6 +18,7 @@ If you are running on Windows, you will need make installed via something like C
 The `.emacs.d/lisp/org-mode.el` include which is referenced in init.el requires some other setup, and will error if you attempt to use org-mode without the subdirectories created. This can be rememdied by creating them in file explorer or executing the following:
 ```mkdir ~/git/orgbinder
  mkdir ~/git/orgfiles
- mkdir ~/git/orgfiles/p```
+ mkdir ~/git/orgfiles/p
+```
 
 refile.org, tasks.org, and diary.org will then be able to utilize the `~/git/orgfiles` directory. Of course, you can update the org-mode.el references to point to a location other than `~/git`. This is all personal preference.
