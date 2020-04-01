@@ -24,3 +24,5 @@ mkdir ~/git/orgfiles/p
 ```
 
 refile.org, tasks.org, and diary.org will then be able to utilize the `~/git/orgfiles` directory. Of course, you can update the org-mode.el references to point to a location other than `~/git`. This is all personal preference.
+
+A final note - to make this configuration auto load on Emacs start, you will need to update the contents of the .emacs file to match init.el. I would automate this, but am using this on a number of machines which would require manual intervention anyways.
