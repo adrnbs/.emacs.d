@@ -5,7 +5,7 @@ After cloning the repository, within emacs execute `M-x(alt + x) load-file RET (
 After hooking into Melpa, run `M-x package-refresh-contents RET`. After refreshing, run `M-x package-install RET use-package`. Once use-package is installed, it will be used to download all other plugins within the init.el config. You can load-file on init.el e.g. `M-x load-file RET ~/.emacs.d/init.el`. If you are met with warning messages, it is most likely due to org-mode dependencies not being cloned.
 
 # Cloning org-mode dependencies
-If you are running this setup with my dockerfile, this will happen automatically. But if you are not running it in a container:
+Grab org-mode and all dependencies via git. Doing this via use-package or package-install will break things.
 ```
 $ cd ~/git/
 $ git clone https://code.orgmode.org/bzg/org-mode.git
