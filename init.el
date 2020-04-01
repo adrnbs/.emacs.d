@@ -353,7 +353,7 @@ _~_: modified
 	    (display-line-numbers-mode 1)))
 
 ;; Limit specific whitespace identifiers.
-(setq whitespace-style (quote (face spaces tabs newline space-marl tab-mark newline-mark)))
+(setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark newline-mark)))
 
 ;; Disable Emacs version control which is enabled by default.
 ;; This prevents Emacs from doing extra work, however, we want it available
