@@ -246,9 +246,9 @@ _~_: modified
 (use-package bbdb)
 
 ;; Flycheck for syntax checking.
-(use-package flycheck
-  :init (global-flycheck-mode))
-(use-package flycheck-rust) ;; Syntaxing for Rust.
+;;(use-package flycheck
+;;  :init (global-flycheck-mode))
+;;(use-package flycheck-rust) ;; Syntaxing for Rust.
 
 ;; Magit for Git integration.
 (use-package magit
