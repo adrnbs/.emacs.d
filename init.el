@@ -26,7 +26,7 @@
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 
-(add-to-list 'load-path "~/git/org-mode/lisp")
+(add-to-list 'load-path "~/Dropbox/emacs/org/org-mode/lisp")
 
 ;; OS specifier for certain packages.
 (cond

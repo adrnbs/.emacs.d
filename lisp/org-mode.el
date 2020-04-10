@@ -6,7 +6,7 @@
 ;;; Code:
 (if (boundp 'org-mode-user-lisp-path)
     (add-to-list 'load-path org-mode-user-lisp-path)
-  (add-to-list 'load-path (expand-file-name "~/git/org-mode/lisp")))
+  (add-to-list 'load-path (expand-file-name "~/Dropbox/emacs/org/org-mode/lisp")))
 
 (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
 (require 'org)
@@ -16,9 +16,10 @@
 (global-set-key (kbd "C-c l") 'org-store-link) ;;Store link for retrieval with C-c C-l
 (global-set-key (kbd "C-c b") 'org-iswitchb) ;;Switch to Org file
 
-(setq org-agenda-files (quote ("~/git/orgbinder"
-			       "~/git/orgfiles"
-			       "~/git/orgfiles/p")))
+(setq org-agenda-files (quote ("~/Dropbox/emacs/org/orgbinder"
+			       "~/Dropbox/emacs/org/orgfiles"
+			       "~/Dropbox/emacs/org/orgfiles/personal"
+			       )))
 
 (add-to-list 'auto-mode-alist '("\\.\\(org((|org_archive\\|txt\\)$" . org-mode))
 
@@ -113,30 +114,60 @@
               ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
               ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 
-(setq org-directory "~/git/orgfiles")
-(setq org-default-notes-file "~/git/orgfiles/refile.org")
+(setq org-directory "~/Dropbox/emacs/org/orgfiles")
+(setq org-default-notes-file "~/Dropbox/emacs/org/orgfiles/refile.org")
 
 ;; I use C-c c to start capture mode
 (global-set-key (kbd "C-c c") 'org-capture)
 
 ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
 (setq org-capture-templates
-      (quote (("t" "todo" entry (file "~/git/orgfiles/refile.org")
+      (quote (("t" "todo" entry (file "~/Dropbox/emacs/org/orgfiles/refile.org")
                "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-              ("r" "respond" entry (file "~/git/orgfiles/refile.org")
+              ("r" "respond" entry (file "~/Dropbox/emacs/org/orgfiles/refile.org")
                "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-              ("n" "note" entry (file "~/git/orgfiles/refile.org")
+              ("n" "note" entry (file "~/Dropbox/emacs/org/orgfiles/refile.org")
                "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-              ("j" "Journal" entry (file+datetree "~/git/orgfiles/diary.org")
+              ("j" "Journal" entry (file+datetree "~/Dropbox/emacs/org/orgfiles/journal.org")
                "* %?\n%U\n" :clock-in t :clock-resume t)
-              ("w" "org-protocol" entry (file "~/git/orgfiles/refile.org")
+              ("w" "org-protocol" entry (file "~/Dropbox/emacs/org/orgfiles/refile.org")
                "* TODO Review %c\n%U\n" :immediate-finish t)
-              ("m" "Meeting" entry (file "~/git/orgfiles/refile.org")
+              ("m" "Meeting" entry (file "~/Dropbox/emacs/org/orgfiles/refile.org")
                "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-              ("p" "Phone call" entry (file "~/git/orgfiles/refile.org")
+              ("p" "Phone call" entry (file "~/Dropbox/emacs/org/orgfiles/refile.org")
                "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
-              ("h" "Habit" entry (file "~/git/orgfiles/refile.org")
-               "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+              ("h" "Habit" entry (file "~/Dropbox/emacs/org/orgfiles/refile.org")
+               "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
+	      ("l" "Capture link from clipboard" entry (file "~/Dropbox/emacs/org/orgfiles/notes.org")
+	       (function mkm-org-capture/link) :empty-lines-after 2 :prepend))))
+
+;; Allow capturing articles/links to read later
+(defun mkm-org-capture/link ()
+  "Make a TODO entry with a link in clipboard. Page title is used as task heading."
+  (let* ((url-string (s-trim (x-get-clipboard)))
+	 (pdf (string-suffix-p "pdf" url-string)))
+    (unless pdf
+      (let ((page-title (org-web-tools--html-title (org-web-tools--get-url url-string))))
+	(concat "* TODO"
+		page-title
+		"\n\t:PROPERTIES:\n\t:URL: "
+		url-string
+		"\n\t:END:\n\n\s\s- %?")))))
+
+(defun mkm-org/read-entry ()
+  "Read a notes entry with webpage and TODO side-by-side"
+  (interactive)
+  (let* ((url-prop (org-entry-properties (point) "URL")))
+    (progn
+      (if url-prop
+	  (let* ((url (cdr (assoc "URL" url-prop))))
+	    (if (string-match-p (regexp-quote "youtube.com") url)
+		(browse-url url)
+	      (progn
+		(org-narrow-to-subtree)
+		(delete-other-windows)
+		(split-window-right)
+		(eww url))))))))
 
 ;; Remove empty LOGBOOK drawers on clock out
 (defun bh/remove-empty-drawer-on-clock-out ()
@@ -780,7 +811,7 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
 (require 'ox-latex)
 (require 'ox-ascii)
 
-(setq org-ditaa-jar-path "~/git/org-mode/contrib/scripts/ditaa.jar")
+(setq org-ditaa-jar-path "~/Dropbox/emacs/org/org-mode/contrib/scripts/ditaa.jar")
 (setq org-plantuml-jar-path "~/java/plantuml.jar")
 
 (add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
@@ -1192,7 +1223,7 @@ so change the default 'F' binding in the agenda to allow both"
 (setq org-agenda-skip-timestamp-if-done t)
 
 (setq org-agenda-include-diary nil)
-(setq org-agenda-diary-file "~/git/orgfiles/diary.org")
+(setq org-agenda-diary-file "~/Dropbox/emacs/org/orgfiles/journal.org")
 
 (setq org-agenda-insert-diary-extract-time t)
 
@@ -1320,7 +1351,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
 ;; Use sticky agenda's so they persist
 (setq org-agenda-sticky t)
 
-(add-to-list 'load-path (expand-file-name "~/git/org-mode/contrib/lisp"))
+(add-to-list 'load-path (expand-file-name "~/Dropbox/emacs/org/org-mode/contrib/lisp"))
 
 (require 'org-checklist)
 

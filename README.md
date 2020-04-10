@@ -7,7 +7,7 @@ After hooking into Melpa, run `M-x package-refresh-contents RET`. After refreshi
 # Cloning org-mode dependencies
 Grab org-mode and all dependencies via git. Doing this via use-package or package-install will break things.
 ```
-$ cd ~/git/
+$ cd ~/Dropbox/emacs/org/
 $ git clone https://code.orgmode.org/bzg/org-mode.git
 $ cd org-mode/
 $ make autoloads
@@ -18,11 +18,12 @@ If you are running on Windows, you will need make installed via something like C
 # Other information
 The `.emacs.d/lisp/org-mode.el` include which is referenced in init.el requires some other setup, and will error if you attempt to use org-mode without the subdirectories created. This can be remedied by creating them in file explorer or executing the following:
 ```
-mkdir ~/git/orgbinder
-mkdir ~/git/orgfiles
-mkdir ~/git/orgfiles/p
+mkdir ~/Dropbox/emacs/org/orgbinder
+mkdir ~/Dropbox/emacs/org/orgfiles
+mkdir ~/Dropbox/emacs/org/orgfiles/personal
+mkdir ~/Dropbox/emacs/org/orgfiles/notes
 ```
 
-refile.org, tasks.org, and diary.org will then be able to utilize the `~/git/orgfiles` directory. Of course, you can update the org-mode.el references to point to a location other than `~/git`. This is all personal preference.
+refile.org, tasks.org, and diary.org will then be able to utilize the `~/Dropbox/emacs/org/orgfiles` directory. Of course, you can update the org-mode.el references to point to a location other than `~/Dropbox/...`. This is all personal preference.
 
-A final note - to make this configuration auto load on Emacs start, you will need to update the contents of the .emacs file to match init.el. I would automate this, but am using this on a number of machines which would require manual intervention anyways.
+A final note - to make this configuration auto load on Emacs start, you will need to update the contents of the .emacs file to match init.el. I would automate this, but am using this on a number of machines. Sourcing from something like Dropbox has helped remedy the issue.
