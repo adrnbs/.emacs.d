@@ -329,6 +329,7 @@ _~_: modified
 
 ;; Orgmode.
 ;;(use-package org)
+(use-package org-web-tools)
 (use-package org-bullets)
 (add-hook 'org-mode-hook 'org-bullets-mode)
 
