@@ -1,8 +1,22 @@
-;;; init.el --- Main initialization file for Emacs
-;;; Commentary:
-;;; Emacs startup file; contains bindings, env settings, repo sources, etc.
+;; init.el --- Main initialization file for Emacs
 
-;;; Code:
+;; Author: Aaron Dornbos <drnbs@airmail.cc>
+;; Created: August 1, 2019
+;; Homepage: https://github.com/dornbosad/.emacs.d
+;; Keywords: init, convenience, vc, config
+
+;; This program is free software. You can redistribute it and/or modify it under
+;; the terms of the Do What The Fuck You Want To Public License, version 2 as
+;; published by Sam Hocevar.
+;;
+;; This program is distributed in the hope that it will be useful, but WITHOUT
+;; ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+;; FOR A PARTICULAR PURPOSE.
+;;
+;; You should have received a copy of the Do What The Fuck You Want To Public
+;; License along with this program. If not, see http://www.wtfpl.net/.
+
+;; Code:
 ;; Package Sources:
 ;; ----------
 ;; Set package archive references as well as the priority per reference.
@@ -26,7 +40,7 @@
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 
-(add-to-list 'load-path "~/Dropbox/emacs/org/org-mode/lisp")
+(add-to-list 'load-path "~/gitClones/org-mode/lisp")
 
 ;; OS specifier for certain packages.
 (cond
@@ -72,6 +86,8 @@
       ;; (lambda () (when (equal (buffer-name) "*Scratch*") 9)))
 
 (use-package hydra)
+
+;; Buffer menu hydra
 (defhydra hydra-buffer-menu (:color pink
                              :hint nil)
   "
@@ -101,6 +117,30 @@ _~_: modified
   ("v" Buffer-menu-select "select" :color blue)
   ("o" Buffer-menu-other-window "other-window" :color blue)
   ("q" quit-window "quit" :color blue))
+
+;; Flycheck hydra
+(defhydra hydra-flycheck (:color blue)
+  "
+  ^
+  ^Flycheck^          ^Errors^            ^Checker^
+  ^────────^──────────^──────^────────────^───────^─────
+  _q_ quit            _<_ previous        _?_ describe
+  _M_ manual          _>_ next            _d_ disable
+  _v_ verify setup    _f_ check           _m_ mode
+  ^^                  _l_ list            _s_ select
+  ^^                  ^^                  ^^
+  "
+  ("q" nil)
+  ("<" flycheck-previous-error :color pink)
+  (">" flycheck-next-error :color pink)
+  ("?" flycheck-describe-checker)
+  ("M" flycheck-manual)
+  ("d" flycheck-disable-checker)
+  ("f" flycheck-buffer)
+  ("l" flycheck-list-errors)
+  ("m" flycheck-mode)
+  ("s" flycheck-select-checker)
+  ("v" flycheck-verify-setup))
 
 (define-key Buffer-menu-mode-map "." 'hydra-buffer-menu/body)
 
@@ -213,17 +253,20 @@ _~_: modified
   (add-to-list 'auto-mode-alist '("\\dockerfile'" . dockerfile-mode)))
 
 ;; Dashboard setup.
-;;  (use-package dashboard
-;;    :ensure t
-;;    :init
-;;    (dashboard-setup-startup-hook)
-;;    (setq dashboard-items '(
-;;                (recents . 5)
-;;                (projects . 10)
-;;                ))
-;;    (setq dashboard-banner-logo-title "")
-;;    (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png"))
-;;    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+(defun my/dashboard-banner ()
+  """Set a dashboard banner including information on package initialization
+   time and garbage collections."""
+  (setq dashboard-banner-logo-title
+        (format "Emacs ready in %.2f seconds with %d garbage collections."
+                (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
+
+(use-package dashboard
+  :init
+  (add-hook 'after-init-hook 'dashboard-refresh-buffer)
+  (add-hook 'dashboard-mode-hook 'my/dashboard-banner)
+  :config
+  (setq dashboard-startup-banner 'logo)
+  (dashboard-setup-startup-hook))
 
 ;; Set options during execution of counsel-find-file.
 (ivy-set-actions
@@ -246,9 +289,13 @@ _~_: modified
 (use-package bbdb)
 
 ;; Flycheck for syntax checking.
-;;(use-package flycheck
-;;  :init (global-flycheck-mode))
-;;(use-package flycheck-rust) ;; Syntaxing for Rust.
+(use-package flycheck
+  :defer 2
+  :diminish
+  :init (global-flycheck-mode)
+  :custom
+  (flycheck-display-errors-delay .3)
+  (flycheck-stylelintrc "~/.stylelintrc.json"))
 
 ;; Magit for Git integration.
 (use-package magit
@@ -328,7 +375,7 @@ _~_: modified
   (auto-package-update-maybe))
 
 ;; Orgmode.
-;;(use-package org)
+(use-package org)
 (use-package org-web-tools)
 (use-package org-bullets)
 (add-hook 'org-mode-hook 'org-bullets-mode)
@@ -380,8 +427,8 @@ _~_: modified
 (global-set-key (kbd "C-S-d") 'duplicate-line)
 
 ;; Display line numbers in buffer globally, or in active buffer.
-(global-set-key (kbd "C-c d l g") 'global-display-line-numbers-mode) ;; Display lines global
-(global-set-key (kbd "C-c d l b") 'display-line-numbers-mode) ;; Display lines buffer
+(global-set-key (kbd "C-c n l g") 'global-displayd-line-numbers-mode) ;; Display lines global
+(global-set-key (kbd "C-c n l b") 'display-line-numbers-mode) ;; Display lines buffer
 
 ;; Macro for larger buffers by 5.
 (fset 'expand-height
@@ -456,9 +503,9 @@ _~_: modified
 
 ;; Set font(s)
 (add-to-list 'default-frame-alist '(font . "Hack"))
-(set-face-attribute 'default nil
-		    ;;:family "Hack")
-		    :font "-unknown-Hack-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
+;;(set-face-attribute 'default nil
+;;		    :family "Hack")
+;;		    :font "-unknown-Hack-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
 
 ;; Paren matching globally.
 (show-paren-mode 1)
@@ -511,3 +558,17 @@ _~_: modified
                ("\\paragraph{%s}" . "\\paragraph*{%s}")
                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-mode-line-clock ((t (:background "grey75" :foreground "pink" :box (:line-width -1 :style released-button))))))
