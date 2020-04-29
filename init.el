@@ -355,9 +355,13 @@ _~_: modified
 (use-package graphviz-dot-mode)
 (use-package plantuml-mode)
 
+;; All the icons
+(use-package all-the-icons)
 ;; Nice colors.
-(use-package dracula-theme)
-
+;;(use-package dracula-theme)
+(use-package nord-theme)
+(add-to-list 'custom-theme-load-path (expand-file-name "~/.emacs.d/themes/"))
+(load-theme 'nord t)
 ;;(use-package gruber-darker-theme)
 
 ;;(use-package spacemacs-theme
@@ -373,6 +377,11 @@ _~_: modified
   (setq auto-package-update-old-versions t)
   (setq auto-package-update-hide-results t)
   (auto-package-update-maybe))
+
+;; Doom modeline
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
 
 ;; Orgmode.
 (use-package org)
@@ -563,9 +572,13 @@ _~_: modified
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(doom-modeline-bar-width 3)
+ '(doom-modeline-icon t)
+ '(flycheck-display-errors-delay 0.3)
+ '(flycheck-stylelintrc "~/.stylelintrc.json")
  '(package-selected-packages
    (quote
-    (flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons))))
+    (nord-theme flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
