@@ -22,14 +22,16 @@
 ;; ----------
 ;; Set package archive references as well as the priority per reference.
 ;; The higher the number, the more priority the archive has.
+
+;; TODO - split this into another file as it is getting unruly
 (setq package-archives
       '(("GNU ELPA"      . "https://elpa.gnu.org/packages/")
-	("MELPA Stable"  . "https://stable.melpa.org/packages/")
-	("MELPA"         . "https://melpa.org/packages/"))
+		("MELPA Stable"  . "https://stable.melpa.org/packages/")
+		("MELPA"         . "https://melpa.org/packages/"))
       package-archive-priorities
       '(("GNU ELPA"      . 10)
-	("MELPA Stable"  . 5)
-	("MELPA"         . 0)))
+		("MELPA Stable"  . 5)
+		("MELPA"         . 0)))
 (package-initialize)
 
 (setq-default
