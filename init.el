@@ -60,6 +60,23 @@
 (set-face-attribute 'default nil :font "Source Code Pro Medium")
 (set-fontset-font t 'latin "Noto Sans")
 
+;; https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+;; https://github.com/rememberYou/.emacs.d/blob/master/config.org/
+(defvar xdg-bin (getenv "XDG_BIN_HOME")
+  "The XDG bin base directory.")
+
+(defvar xdg-cache (getenv "XDG_CACHE_HOME")
+  "The XDG cache base directory.")
+
+(defvar xdg-config (getenv "XDG_CONFIG_HOME")
+  "The XDG config base directory.")
+
+(defvar xdg-data (getenv "XDG_DATA_HOME")
+  "The XDG data base directory.")
+
+(defvar xdg-lib (getenv "XDG_LIB_HOME")
+  "The XDG lib base directory.")
+
 ;; Packages:
 ;; ----------
 ;; Invoke 'use-package' package and set the default use-package-always-ensure
@@ -68,6 +85,8 @@
 ;; https://github.com/jwiegley/use-package/
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
+(use-package use-package-ensure-system-package
+  :ensure t)
 
 (add-to-list 'load-path "~/gitClones/org-mode/lisp")
 
@@ -99,52 +118,34 @@
   (progn
     ;; Projectile for non Windows.
 	(use-package projectile
-  :defer 1
-  :preface
-  (defun my/projectile-compilation-buffers (&optional project)
-    "Get a list of a project's compilation buffers.
+	  :defer 1
+	  :preface
+	  (defun my/projectile-compilation-buffers (&optional project)
+		"Get a list of a project's compilation buffers.
   If PROJECT is not specified the command acts on the current project."
-    (let* ((project-root (or project (projectile-project-root)))
-           (buffer-list (mapcar #'process-buffer compilation-in-progress))
-           (all-buffers (cl-remove-if-not
-                         (lambda (buffer)
-                           (projectile-project-buffer-p buffer project-root))
-                         buffer-list)))
-      (if projectile-buffers-filter-function
-          (funcall projectile-buffers-filter-function all-buffers)
-        all-buffers)))
-  :custom
-  (projectile-cache-file (expand-file-name (format "%s/emacs/projectile.cache" xdg-cache)))
-  (projectile-completion-system 'ivy)
-  (projectile-enable-caching t)
-  (projectile-keymap-prefix (kbd "C-c C-p"))
-  (projectile-known-projects-file (expand-file-name (format "%s/emacs/projectile-bookmarks.eld" xdg-cache)))
-  (projectile-mode-line '(:eval (projectile-project-name)))
-  :config (projectile-global-mode))
+		(let* ((project-root (or project (projectile-project-root)))
+			   (buffer-list (mapcar #'process-buffer compilation-in-progress))
+			   (all-buffers (cl-remove-if-not
+							 (lambda (buffer)
+							   (projectile-project-buffer-p buffer project-root))
+							 buffer-list)))
+		  (if projectile-buffers-filter-function
+			  (funcall projectile-buffers-filter-function all-buffers)
+			all-buffers)))
+	  :custom
+	  (projectile-cache-file (expand-file-name (format "%s/emacs/projectile.cache" xdg-cache)))
+	  (projectile-completion-system 'ivy)
+	  (projectile-enable-caching t)
+	  (projectile-keymap-prefix (kbd "C-c C-p"))
+	  (projectile-mode-line '(:eval (projectile-project-name)))
+	  :config (projectile-mode))
 
-(use-package counsel-projectile
-  :after (counsel projectile)
-  :config (counsel-projectile-mode 1))
+	(use-package counsel-projectile
+	  :after (counsel projectile)
+	  :config (counsel-projectile-mode 1))
     (message "Using Linux environment configurations."))))
 
 (use-package all-the-icons :defer 0.5)
-
-;; https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-;; https://github.com/rememberYou/.emacs.d/blob/master/config.org/
-(defvar xdg-bin (getenv "XDG_BIN_HOME")
-  "The XDG bin base directory.")
-
-(defvar xdg-cache (getenv "XDG_CACHE_HOME")
-  "The XDG cache base directory.")
-
-(defvar xdg-config (getenv "XDG_CONFIG_HOME")
-  "The XDG config base directory.")
-
-(defvar xdg-data (getenv "XDG_DATA_HOME")
-  "The XDG data base directory.")
-
-(defvar xdg-lib (getenv "XDG_LIB_HOME")
-  "The XDG lib base directory.")
 
 ;; Window-numbering for improved switching/assignment.
 ;; See https://github.com/nschum/window-numbering.el
@@ -163,32 +164,14 @@
 ;; Needs hunspell from pkg manager in system
 (use-package ispell
   :defer 2
-  :ensure-system-package (hunspell . "trizen -S hunspell")
+  :ensure-system-package hunspell
   :custom
   (ispell-dictionary "en_US")
   (ispell-dictionary-alist
-   '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)
-     ("fr_BE" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "fr_BE") nil utf-8)))
-  (ispell-program-name (executable-find "hunspell"))
-  (ispell-really-hunspell t)
-  (ispell-silently-savep t)
-  :preface
-  (defun my/switch-language ()
-    "Switches between the English and French language."
-    (interactive)
-    (let* ((current-dictionary ispell-current-dictionary)
-           (new-dictionary (if (string= current-dictionary "fr_BE") "en_US" "fr_BE")))
-      (ispell-change-dictionary new-dictionary)
-      (if (string= new-dictionary "fr_BE")
-          (langtool-switch-default-language "fr")
-        (langtool-switch-default-language "en"))
-
-      ;;Clears all these old errors after switching to the new language
-      (if (and (boundp 'flyspell-mode) flyspell-mode)
-          (flyspell-mode 0)
-        (flyspell-mode 1))
-
-    (message "Dictionary switched from %s to %s" current-dictionary new-dictionary))))
+   '("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)
+   (ispell-program-name (executable-find "hunspell"))
+   (ispell-really-hunspell t)
+   (ispell-silently-savep t)))
 
 (use-package aggressive-indent
   :hook ((css-mode . aggressive-indent-mode)
@@ -960,13 +943,44 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(aggressive-indent-comments-too nil)
+ '(alert-default-style (quote libnotify))
+ '(auto-revert-verbose nil)
+ '(browse-url-browser-function (quote browse-url-generic))
+ '(browse-url-generic-program "qutebrowser")
+ '(company-begin-commands (quote (self-insert-command)))
+ '(company-idle-delay 0.1)
+ '(company-minimum-prefix-length 2)
+ '(company-show-numbers t)
+ '(company-tooltip-align-annotations t)
  '(doom-modeline-bar-width 3)
  '(doom-modeline-icon t)
  '(flycheck-display-errors-delay 0.3)
+ '(flycheck-pylintrc "~/.pylintrc")
+ '(flycheck-python-pylint-executable "/usr/bin/pylint")
  '(flycheck-stylelintrc "~/.stylelintrc.json")
+ '(global-company-mode t)
+ '(history-delete-duplicates t)
+ '(history-length t)
  '(package-selected-packages
    (quote
-    (nord-theme flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons))))
+	(use-package-ensure-system-package ibuffer-projectile engine-mode company-box major-mode-hydra imgbb webpaste smartparens rainbow-delimiters wiki-summary which-key try electric-operator rainbow-mode aggressive-indent alert counsel-projectile nord-theme flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons)))
+ '(projectile-cache-file "/home/adornbos/nil/emacs/projectile.cache")
+ '(projectile-completion-system (quote ivy))
+ '(projectile-enable-caching t)
+ '(projectile-keymap-prefix "")
+ '(projectile-known-projects-file "/home/adornbos/nil/emacs/projectile-bookmarks.eld")
+ '(projectile-mode-line (quote (:eval (projectile-project-name))) t)
+ '(recentf-exclude
+   (quote
+	("COMMIT_EDITMSG" "~$" "/scp:" "/ssh:" "/sudo:" "/tmp/")))
+ '(recentf-max-menu-items 15)
+ '(recentf-max-saved-items 200)
+ '(recentf-save-file "/home/adornbos/nil/emacs/recentf")
+ '(savehist-additional-variables (quote (kill-ring search-ring regexp-search-ring)))
+ '(savehist-file "/home/adornbos/nil/emacs/history")
+ '(savehist-save-minibuffer-history 1)
+ '(sp-escape-quotes-after-insert nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
