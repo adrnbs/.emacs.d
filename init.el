@@ -962,6 +962,12 @@
  '(global-company-mode t)
  '(history-delete-duplicates t)
  '(history-length t)
+ '(ispell-dictionary "en_US")
+ '(ispell-dictionary-alist
+   (quote
+	("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil
+	 ("-d" "en_US")
+	 nil utf-8)) t)
  '(package-selected-packages
    (quote
 	(use-package-ensure-system-package ibuffer-projectile engine-mode company-box major-mode-hydra imgbb webpaste smartparens rainbow-delimiters wiki-summary which-key try electric-operator rainbow-mode aggressive-indent alert counsel-projectile nord-theme flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons)))
@@ -986,4 +992,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-mode-line-clock ((t (:background "grey75" :foreground "pink" :box (:line-width -1 :style released-button))))))
+ '(org-mode-line-clock ((t (:foreground "pink" :inverse-video nil :family "newspaper")))))

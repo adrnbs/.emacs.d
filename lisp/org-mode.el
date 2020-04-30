@@ -1194,15 +1194,6 @@ so change the default 'F' binding in the agenda to allow both"
           '(lambda () (hl-line-mode 1))
           'append)
 
-;; The following custom-set-faces create the highlights
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- ;; '(org-mode-line-clock ((t (:background "grey75" :foreground "pink" :box (:line-width -1 :style released-button)))) t))
- '(org-mode-line-clock ((t (:foreground "pink" :box (:line-width -1 :style released-button)))) t))
-
 ;; Keep tasks with dates on the global todo lists
 (setq org-agenda-todo-ignore-with-date nil)
 
