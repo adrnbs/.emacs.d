@@ -953,6 +953,9 @@
  '(company-minimum-prefix-length 2)
  '(company-show-numbers t)
  '(company-tooltip-align-annotations t)
+ '(custom-safe-themes
+   (quote
+	("4ea1959cfaa526b795b45e55f77724df4be982b9cd33da8d701df8cdce5b2955" default)))
  '(doom-modeline-bar-width 3)
  '(doom-modeline-icon t)
  '(flycheck-display-errors-delay 0.3)
@@ -992,4 +995,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-mode-line-clock ((t (:foreground "pink" :inverse-video nil :family "newspaper")))))
+ '(org-mode-line-clock ((t (:foreground "pink" :box (:line-width -1 :style released-button))))))
