@@ -448,6 +448,7 @@
 	 ("<f1> i" . 'counsel-info-lookup-symbol)
 	 ("<f1> u" . 'counsel-unicode-char)
 	 ("C-c C-r" . 'ivy-resume)
+	 ("C-c C-v" . 'ivy-push-view)
 
 	 ("C-c g" . 'counsel-git)
 	 ("C-c j" . 'counsel-git-grep)
@@ -976,20 +977,20 @@
  '(package-selected-packages
    (quote
 	(use-package-ensure-system-package ibuffer-projectile engine-mode company-box major-mode-hydra imgbb webpaste smartparens rainbow-delimiters wiki-summary which-key try electric-operator rainbow-mode aggressive-indent alert counsel-projectile nord-theme flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons)))
- '(projectile-cache-file "/home/adornbos/nil/emacs/projectile.cache")
+ '(projectile-cache-file "/home/aaron/nil/emacs/projectile.cache")
  '(projectile-completion-system (quote ivy))
  '(projectile-enable-caching t)
  '(projectile-keymap-prefix "")
- '(projectile-known-projects-file "/home/adornbos/nil/emacs/projectile-bookmarks.eld")
+ '(projectile-known-projects-file "/home/aaron/nil/emacs/projectile-bookmarks.eld")
  '(projectile-mode-line (quote (:eval (projectile-project-name))) t)
  '(recentf-exclude
    (quote
 	("COMMIT_EDITMSG" "~$" "/scp:" "/ssh:" "/sudo:" "/tmp/")))
  '(recentf-max-menu-items 15)
  '(recentf-max-saved-items 200)
- '(recentf-save-file "/home/adornbos/nil/emacs/recentf")
+ '(recentf-save-file "/home/aaron/nil/emacs/recentf")
  '(savehist-additional-variables (quote (kill-ring search-ring regexp-search-ring)))
- '(savehist-file "/home/adornbos/nil/emacs/history")
+ '(savehist-file "/home/aaron/nil/emacs/history")
  '(savehist-save-minibuffer-history 1)
  '(sp-escape-quotes-after-insert nil))
 (custom-set-faces
