@@ -57,6 +57,9 @@
 (global-hl-line-mode)                             ; Hightlight current line
 (set-default-coding-systems 'utf-8)               ; Default to utf-8 encoding
 (show-paren-mode 1)                               ; Show the parens
+(tool-bar-mode -1)                                ; Hide toolbar
+(scroll-bar-mode -1)                              ; Hide scrollbars
+(menu-bar-mode -1)                                ; Hide menubar
 
 ;; Font configuration
 (set-face-attribute 'default nil :font "Source Code Pro Medium")
@@ -156,7 +159,7 @@
 ;; Invoke function for static placement.
 ;; TODO: Specifics for OS env? Mail?
 ;; (setq window-numbering-assign-func
-      ;; (lambda () (when (equal (buffer-name) "*Scratch*") 9)))
+;; (lambda () (when (equal (buffer-name) "*Scratch*") 9)))
 
 ;; Alert, don't forget to install a notif daemon first e.g. dunst
 (use-package alert
@@ -322,10 +325,10 @@
   ("Action"
    (("r" image-rotate "rotate")
     ("s" image-save "save" :color teal))
-    "Zoom"
-    (("-" image-decrease-size "out")
-     ("+" image-increase-size "in")
-     ("=" image-transform-reset "reset"))))
+   "Zoom"
+   (("-" image-decrease-size "out")
+	("+" image-increase-size "in")
+	("=" image-transform-reset "reset"))))
 
 (pretty-hydra-define hydra-magit
   (:hint nil :color teal :quit-key "q" :title (with-alltheicon "git" "Magit" 1 -0.05))
@@ -440,21 +443,21 @@
   (setq ivy-height 10) ;; Allow a hard height to be set for buffer.
   (setq ivy-count-format "(%d/%d) ") ;; Changes the format of the number of results.
   :bind (("\C-s" . 'swiper)
-	 ("M-x" . 'counsel-M-x)
-	 ("C-x C-f" . 'counsel-find-file)
-	 ("<f1> f" . 'counsel-describe-function)
-	 ("<f1> v" . 'counsel-describe-variable)
-	 ("<f1> l" . 'counsel-find-library)
-	 ("<f1> i" . 'counsel-info-lookup-symbol)
-	 ("<f1> u" . 'counsel-unicode-char)
-	 ("C-c C-r" . 'ivy-resume)
-	 ("C-c C-v" . 'ivy-push-view)
+		 ("M-x" . 'counsel-M-x)
+		 ("C-x C-f" . 'counsel-find-file)
+		 ("<f1> f" . 'counsel-describe-function)
+		 ("<f1> v" . 'counsel-describe-variable)
+		 ("<f1> l" . 'counsel-find-library)
+		 ("<f1> i" . 'counsel-info-lookup-symbol)
+		 ("<f1> u" . 'counsel-unicode-char)
+		 ("C-c C-r" . 'ivy-resume)
+		 ("C-c C-v" . 'ivy-push-view)
 
-	 ("C-c g" . 'counsel-git)
-	 ("C-c j" . 'counsel-git-grep)
-	 ("C-c k" . 'counsel-ag)
-	 ("C-x l" . 'counsel-locate)
-	 ("C-S-o" . 'counsel-rhythmbox)))
+		 ("C-c g" . 'counsel-git)
+		 ("C-c j" . 'counsel-git-grep)
+		 ("C-c k" . 'counsel-ag)
+		 ("C-x l" . 'counsel-locate)
+		 ("C-S-o" . 'counsel-rhythmbox)))
 
 ;; Treemacs and configuration options.
 (use-package treemacs
@@ -535,7 +538,7 @@
 (use-package page-break-lines)
 
 (use-package dockerfile-mode
-    :config
+  :config
   (add-to-list 'auto-mode-alist '("\\dockerfile'" . dockerfile-mode)))
 
 ;; Dashboard setup.
@@ -577,7 +580,7 @@
 (ivy-set-actions
  'ivy-switch-buffer
  '(("k" kill-buffer "kill")
-  ("r" ivy--rename-buffer-action "rename")))
+   ("r" ivy--rename-buffer-action "rename")))
 
 ;; Allow ob-http for Org mode http requests.
 ;; See https://emacs.stackexchange.com/questions/2427/how-to-test-rest-api-with-emacs
@@ -602,7 +605,7 @@
 ;; Magit for Git integration.
 (use-package magit
   :bind (("C-x g" . magit-status)
-	 ("C-x M-g" . magit-dispatch)))
+		 ("C-x M-g" . magit-dispatch)))
 
 ;; Company for auto-completion in Emacs' functions and variables.
 (use-package company
@@ -718,7 +721,7 @@
   (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
 (require 'yaml-mode)
 (add-hook 'yaml-mode-hook
-	  '(lambda () (define-key yaml-mode-map "<RET>" 'newline-and-indent)))
+		  '(lambda () (define-key yaml-mode-map "<RET>" 'newline-and-indent)))
 
 ;; Clojure editing mode integration.
 ;;(use-package cider
@@ -730,9 +733,9 @@
   :config
   (drag-stuff-global-mode 1)
   :bind (("C-S-t" . drag-stuff-up)
-	 ("C-S-y" . drag-stuff-down)
-	 ("C-S-g" . drag-stuff-left)
-	 ("C-S-h" . drag-stuff-right)))
+		 ("C-S-y" . drag-stuff-down)
+		 ("C-S-g" . drag-stuff-left)
+		 ("C-S-h" . drag-stuff-right)))
 
 ;; Graphviz and PlantUML for org graphics.
 (use-package graphviz-dot-mode)
@@ -781,16 +784,16 @@
 ;; Instead, they can simply check if a mode is derived from one of the
 ;; base modes.
 (add-hook 'prog-mode-hook
-	    (lambda ()
-	      (display-line-numbers-mode 1)
-	      (interactive)
-	      ;;(whitespace-mode nil)
-	      (setq-local whitespace-line-column 120)
-	      (whitespace-mode 1)))
+		  (lambda ()
+			(display-line-numbers-mode 1)
+			(interactive)
+			;;(whitespace-mode nil)
+			(setq-local whitespace-line-column 120)
+			(whitespace-mode 1)))
 
 (add-hook 'yaml-mode-hook
-	  (lambda ()
-	    (display-line-numbers-mode 1)))
+		  (lambda ()
+			(display-line-numbers-mode 1)))
 
 ;; Limit specific whitespace identifiers.
 (setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark newline-mark)))
@@ -862,10 +865,10 @@
 ;; 'C-j' can be used to insert a new line, as <return> exits the mode.
 (use-package multiple-cursors
   :bind (("C-|" . mc/edit-lines) ;; At cursor, mark each line up/down.
-	 ("C->" . mc/mark-next-like-this) ;; Start dropping cursor marks down.
-	 ("C-<" . mc/mark-previous-like-this) ;; Start shifting cursor marks up.
-	 ("C-C C-<" . mc/mark-all-like-this)
-	 ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
+		 ("C->" . mc/mark-next-like-this) ;; Start dropping cursor marks down.
+		 ("C-<" . mc/mark-previous-like-this) ;; Start shifting cursor marks up.
+		 ("C-C C-<" . mc/mark-all-like-this)
+		 ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
 
 ;; Miscellaneous:
 ;; ----------
@@ -882,10 +885,10 @@
 ;; Configure references for other elisp files to be imported into init.el.
 (defconst user-init-dir
   (cond ((boundp 'user-emacs-directory)
-	 user-emacs-directory)
-	((boundp 'user-init-directory)
-	 user-init-directory)
-	(t "~/.emacs.d/")))
+		 user-emacs-directory)
+		((boundp 'user-init-directory)
+		 user-init-directory)
+		(t "~/.emacs.d/")))
 
 (defun load-user-file (file)
   (interactive "f")
