@@ -93,7 +93,10 @@
 (use-package use-package-ensure-system-package
   :ensure t)
 
+;;(require 'org-tempo)
+
 (add-to-list 'load-path "~/gitClones/org-mode/lisp")
+(require 'ox-confluence)
 
 ;; OS specifier for certain packages.
 (cond
@@ -541,6 +544,18 @@
   :config
   (add-to-list 'auto-mode-alist '("\\dockerfile'" . dockerfile-mode)))
 
+(use-package terraform-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\*.tf'" . terraform-mode)))
+
+;; TypeScript
+(use-package tide
+  :ensure t
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (before-save . tide-format-before-save)))
+
 ;; Dashboard setup.
 (defun my/dashboard-banner ()
   """Set a dashboard banner including information on package initialization
@@ -979,8 +994,9 @@
 	 nil utf-8)) t)
  '(package-selected-packages
    (quote
-	(use-package-ensure-system-package ibuffer-projectile engine-mode company-box major-mode-hydra imgbb webpaste smartparens rainbow-delimiters wiki-summary which-key try electric-operator rainbow-mode aggressive-indent alert counsel-projectile nord-theme flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons)))
- '(projectile-cache-file "/home/aaron/nil/emacs/projectile.cache")
+
+	(terraform-mode use-package-ensure-system-package ibuffer-projectile engine-mode company-box major-mode-hydra imgbb webpaste smartparens rainbow-delimiters wiki-summary which-key try electric-operator rainbow-mode aggressive-indent alert counsel-projectile nord-theme flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons)))
+ '(projectile-cache-file "/home/adornbos/nil/emacs/projectile.cache")
  '(projectile-completion-system (quote ivy))
  '(projectile-enable-caching t)
  '(projectile-keymap-prefix "")
