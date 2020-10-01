@@ -26,4 +26,4 @@ mkdir ~/Dropbox/emacs/org/orgfiles/notes
 
 refile.org, tasks.org, and diary.org will then be able to utilize the `~/Dropbox/emacs/org/orgfiles` directory. Of course, you can update the org-mode.el references to point to a location other than `~/Dropbox/...`. This is all personal preference.
 
-A final note - to make this configuration auto load on Emacs start, you will need to update the contents of the .emacs file to match init.el. I would automate this, but am using this on a number of machines. Sourcing from something like Dropbox has helped remedy the issue.
+A final note - to make this configuration auto load on Emacs start, you will need to update the contents of the .emacs file to match init.el. I would automate this, but am using this on a number of machines. Sourcing from something like Dropbox has helped remedy the issue. Remember to update username fields!
