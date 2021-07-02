@@ -1,9 +1,9 @@
 ;;; init.el --- Main initialization file for Emacs
 
-;;; Author: Aaron Dornbos <drnbs@airmail.cc>
+;;; Author: Aaron Dornbos <adrnbs@airmail.cc>
 ;;; Created: August 1, 2019
 ;;; Homepage: https://github.com/dornbosad/.emacs.d
-;;; Keywords: init, convenience, vc, config
+;;; Keywords: init, convenience, vc, config, emacs
 
 ;;; Commentary:
 ;; This program is free software. You can redistribute it and/or modify it under
@@ -34,6 +34,7 @@
 		("MELPA"         . 0)))
 (package-initialize)
 
+;; Set some defaults for usability
 (setq-default
  ad-redefinition-action 'accept                   ; Silence warnings for redefinition
  cursor-in-non-selected-windows t                 ; Hide the cursor in inactive windows
@@ -95,8 +96,8 @@
 
 ;;(require 'org-tempo)
 
+;; Reference org-mode deps
 (add-to-list 'load-path "~/gitClones/org-mode/lisp")
-(require 'ox-confluence)
 
 ;; OS specifier for certain packages.
 (cond
@@ -153,23 +154,16 @@
 	  :config (counsel-projectile-mode 1))
     (message "Using Linux environment configurations."))))
 
+;; All-the-icons for pretty integrations in dashboard, treemacs, etc
 (use-package all-the-icons :defer 0.5)
 
 ;; Window-numbering for improved switching/assignment.
 ;; See https://github.com/nschum/window-numbering.el
+;; Use M-# to quickly switch to buffers
 (use-package window-numbering
   :init (window-numbering-mode))
-;; Invoke function for static placement.
-;; TODO: Specifics for OS env? Mail?
-;; (setq window-numbering-assign-func
-;; (lambda () (when (equal (buffer-name) "*Scratch*") 9)))
 
-;; Alert, don't forget to install a notif daemon first e.g. dunst
-(use-package alert
-  :defer 1
-  :custom (alert-default-style 'libnotify))
-
-;; Needs hunspell from pkg manager in system
+;; Needs hunspell from pkg manager
 (use-package ispell
   :defer 2
   :ensure-system-package hunspell
@@ -291,7 +285,7 @@
 
 ;; Flycheck hydra
 (pretty-hydra-define hydra-flycheck
-  (:hint nil :color teal :quit-key "q" :title (with-faicon "plane" "Flycheck" 1 -0.05))
+  (:hint nil :color pink :quit-key "q" :title (with-faicon "plane" "Flycheck" 1 -0.05))
   ("Checker"
    (("?" flycheck-describe-checker "describe")
     ("d" flycheck-disable-checker "disable")
@@ -306,21 +300,17 @@
    (("M" flycheck-manual "manual")
     ("v" flycheck-verify-setup "verify setup"))))
 
-
 ;; TODO - REDEFINE
 (pretty-hydra-define hydra-go-to-file
-  (:hint nil :color teal :quit-key "q" :title (with-faicon "file-text-o" "Go To" 1 -0.05))
+  (:hint nil :color pink :quit-key "q" :title (with-faicon "file-text-o" "Go To" 1 -0.05))
   ("Agenda"
    (("ac" (find-file "~/.personal/agenda/contacts.org") "contacts")
-    ("af" (find-file "~/.personal/agenda/findmycat.org") "findmycat")
     ("as" (find-file "~/.personal/agenda/school.org") "school"))
    "Config"
    (("ca" (find-file (format "%s/alacritty/alacritty.yml" xdg-config)) "alacritty")
-    ("cA" (find-file (format "%s/sh/aliases" xdg-config)) "aliases")
     ("cx" (find-file (format "%s/sh/xdg" xdg-config)) "xdg"))
    "Other"
    (("ob" (find-file "~/.personal/other/books.org") "book")
-    ("op" (find-file "~/.personal/other/purchases.org") "purchase")
     ("ou" (find-file "~/.personal/other/usb.org") "usb"))))
 
 (pretty-hydra-define hydra-image
@@ -334,7 +324,7 @@
 	("=" image-transform-reset "reset"))))
 
 (pretty-hydra-define hydra-magit
-  (:hint nil :color teal :quit-key "q" :title (with-alltheicon "git" "Magit" 1 -0.05))
+  (:hint nil :color pink :quit-key "q" :title (with-alltheicon "git" "Magit" 1 -0.05))
   ("Action"
    (("b" magit-blame "blame")
     ("c" magit-clone "clone")
@@ -366,7 +356,7 @@
     ("k" smerge-kill-current "kill current"))))
 
 (pretty-hydra-define hydra-org
-  (:hint nil :color teal :quit-key "q" :title (with-fileicon "org" "Org" 1 -0.05))
+  (:hint nil :color pink :quit-key "q" :title (with-fileicon "org" "Org" 1 -0.05))
   ("Action"
    (("A" my/org-archive-done-tasks "archive")
     ("a" org-agenda "agenda")
@@ -381,7 +371,7 @@
     ("t" org-show-todo-tree "todo-tree"))))
 
 (pretty-hydra-define hydra-projectile
-  (:hint nil :color teal :quit-key "q" :title (with-faicon "rocket" "Projectile" 1 -0.05))
+  (:hint nil :color pink :quit-key "q" :title (with-faicon "rocket" "Projectile" 1 -0.05))
   ("Buffers"
    (("b" counsel-projectile-switch-to-buffer "list")
     ("k" projectile-kill-buffers "kill all")
@@ -399,7 +389,7 @@
     ("s" counsel-rg "search"))))
 
 (pretty-hydra-define hydra-query
-  (:hint nil :color teal :quit-key "q" :title (with-faicon "search" "Engine-Mode" 1 -0.05))
+  (:hint nil :color pink :quit-key "q" :title (with-faicon "search" "Engine-Mode" 1 -0.05))
   ("Query"
    (("a" engine/search-amazon "amazon")
     ("d" engine/search-duckduckgo "duckduckgo")
@@ -411,7 +401,7 @@
     ("y" engine/search-youtube "youtube"))))
 
 (pretty-hydra-define hydra-spelling
-  (:hint nil :color teal :quit-key "q" :title (with-faicon "magic" "Spelling" 1 -0.05))
+  (:hint nil :color pink :quit-key "q" :title (with-faicon "magic" "Spelling" 1 -0.05))
   ("Checker"
    (("c" langtool-correct-buffer "correction")
     ("C" langtool-check-done "clear")
@@ -540,6 +530,7 @@
 
 (use-package page-break-lines)
 
+;; Modes
 (use-package dockerfile-mode
   :config
   (add-to-list 'auto-mode-alist '("\\dockerfile'" . dockerfile-mode)))
@@ -556,10 +547,22 @@
          (typescript-mode . tide-hl-identifier-mode)
          (before-save . tide-format-before-save)))
 
+;; Yaml editing mode integration.
+(use-package yaml-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+(require 'yaml-mode)
+(add-hook 'yaml-mode-hook
+		  '(lambda () (define-key yaml-mode-map "<RET>" 'newline-and-indent)))
+
+;; Clojure editing mode integration.
+(use-package cider
+  :config
+  (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode)))
+
 ;; Dashboard setup.
 (defun my/dashboard-banner ()
-  """Set a dashboard banner including information on package initialization
-   time and garbage collections."""
+  """Set a dashboard banner including information on package initialization time and garbage collections."""
   (setq dashboard-banner-logo-title
         (format "Emacs ready in %.2f seconds with %d garbage collections."
                 (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
@@ -716,33 +719,6 @@
 
 (use-package company-restclient)
 
-;; Install and load rust-mode for editing code w/ indents and rustfmt.
-;; Rust-format-buffer will format code with rustfmt if installed
-;; (occurs upon buffer saving).
-(use-package rust-mode
-  :config
-  (lambda () (setq indent-tabs-mode nil))
-  (setq rust-format-on-save t))
-(require 'rust-mode)
-
-;; Allows key combos to perform Cargo tasks within Rust projects.
-(use-package cargo
-  :config
-  (add-hook 'rust-mode-hook 'cargo-minor-mode))
-
-;; Yaml editing mode integration.
-(use-package yaml-mode
-  :config
-  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
-(require 'yaml-mode)
-(add-hook 'yaml-mode-hook
-		  '(lambda () (define-key yaml-mode-map "<RET>" 'newline-and-indent)))
-
-;; Clojure editing mode integration.
-;;(use-package cider
-;;  :config
-;;  (add-to-list 'auto-mode-alist '("\\.clj\\'" . clojure-mode)))
-
 ;; Use drag-stuff to manipulate highlighted blocks in global mode(s).
 (use-package drag-stuff
   :config
@@ -760,9 +736,14 @@
 (use-package all-the-icons)
 ;; Nice colors.
 ;;(use-package dracula-theme)
-(use-package nord-theme)
+;;(use-package nord-theme)
+;;(use-package caroline-theme)
+(use-package dracula-theme)
 (add-to-list 'custom-theme-load-path (expand-file-name "~/.emacs.d/themes/"))
-(load-theme 'nord t)
+(load-theme 'dracula t)
+;;(load-theme 'caroline t)
+;;(load-theme 'bliss t)
+;;(load-theme 'nord t)
 ;;(use-package gruber-darker-theme)
 
 ;;(use-package spacemacs-theme
@@ -783,10 +764,10 @@
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))
-
+(setq doom-modeline-height .5)
 ;; Orgmode.
 (use-package org)
-(use-package org-web-tools)
+;;(use-package org-web-tools)
 (use-package org-bullets)
 (add-hook 'org-mode-hook 'org-bullets-mode)
 
@@ -915,22 +896,12 @@
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
-;; Invoke powerline
-;; Installed using: .emacs.d/vendor
-;; git clone git://github.com/jonathanchu/emacs-powerline.git
-(setq powerline-arrow-shape 'arrow) ;; default
-;; (setq powerline-arrow-shape 'curve)
-;; (setq powerline-arrow-shape 'arrow14) ;; best for small fonts
-;; Change mode-line color
-;; (custom-set-faces
-;; '(mode-line ((t (:foreground "#030303" :background "#bdbdbd" :box nil))))
-;; '(mode-line-inactive ((t (:foreground "#f9f9f9" :background "#666666" :box nil)))))
+'(org-mode-line-clock ((t (:foreground "pink" :box (:line-width -1 :style released-button)))))
 
 ;; Set column position display for buffer (l, c).
 (setq column-number-mode t)
 
-;; Remove the scrollbars globally for all frames as well as other
-;; gross gui content.
+;; Remove the scrollbars globally for all frames as well as other gui content.
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
@@ -976,14 +947,14 @@
  '(company-tooltip-align-annotations t)
  '(custom-safe-themes
    (quote
-	("4ea1959cfaa526b795b45e55f77724df4be982b9cd33da8d701df8cdce5b2955" default)))
+	("437cd756e079901ccdecd9c397662a3ee4da646417d7469a1c35aa8e246562fe" "4ea1959cfaa526b795b45e55f77724df4be982b9cd33da8d701df8cdce5b2955" default)))
  '(doom-modeline-bar-width 3)
  '(doom-modeline-icon t)
  '(flycheck-display-errors-delay 0.3)
  '(flycheck-pylintrc "~/.pylintrc")
  '(flycheck-python-pylint-executable "/usr/bin/pylint")
  '(flycheck-stylelintrc "~/.stylelintrc.json")
- '(global-company-mode t)
+ '(fringe-mode 0 nil (fringe))
  '(history-delete-duplicates t)
  '(history-length t)
  '(ispell-dictionary "en_US")
@@ -994,27 +965,20 @@
 	 nil utf-8)) t)
  '(package-selected-packages
    (quote
-
-	(terraform-mode use-package-ensure-system-package ibuffer-projectile engine-mode company-box major-mode-hydra imgbb webpaste smartparens rainbow-delimiters wiki-summary which-key try electric-operator rainbow-mode aggressive-indent alert counsel-projectile nord-theme flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons)))
+	(granger-theme bliss-theme magit magit-patch-changelog terraform-mode use-package-ensure-system-package ibuffer-projectile engine-mode company-box major-mode-hydra imgbb webpaste smartparens rainbow-delimiters wiki-summary which-key try electric-operator rainbow-mode aggressive-indent alert counsel-projectile nord-theme flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons)))
  '(projectile-cache-file "/home/adornbos/nil/emacs/projectile.cache")
  '(projectile-completion-system (quote ivy))
  '(projectile-enable-caching t)
  '(projectile-keymap-prefix "")
- '(projectile-known-projects-file "/home/aaron/nil/emacs/projectile-bookmarks.eld")
+ '(projectile-known-projects-file "/home/adornbos/nil/emacs/projectile-bookmarks.eld")
  '(projectile-mode-line (quote (:eval (projectile-project-name))) t)
- '(recentf-exclude
-   (quote
-	("COMMIT_EDITMSG" "~$" "/scp:" "/ssh:" "/sudo:" "/tmp/")))
- '(recentf-max-menu-items 15)
- '(recentf-max-saved-items 200)
- '(recentf-save-file "/home/aaron/nil/emacs/recentf")
- '(savehist-additional-variables (quote (kill-ring search-ring regexp-search-ring)))
- '(savehist-file "/home/aaron/nil/emacs/history")
- '(savehist-save-minibuffer-history 1)
- '(sp-escape-quotes-after-insert nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-mode-line-clock ((t (:foreground "pink" :box (:line-width -1 :style released-button))))))
+ '(treemacs-fringe-indicator-mode t)
+ '(window-divider-default-places (quote right-only))
+ '(window-divider-default-right-width 0.1)
+ '(window-divider-mode nil)
+ '(fringe ((t nil)))
+ '(org-mode-line-clock ((t (:foreground "pink" :box (:line-width -1 :style released-button)))))
+ '(vertical-border ((default (:background "black" :distant-foreground "black" :foreground "black"))))
+ '(window-divider ((t (:background "black" :distant-foreground "black" :foreground "black" :width extra-condensed))))
+ '(window-divider-first-pixel ((t (:width condensed))))
+ '(window-divider-last-pixel ((t nil))))
