@@ -940,10 +940,9 @@
 
 ;; Add formatting for LaTeX exports in org mode.
 (add-to-list 'org-latex-classes
-             '("adarticle"
+             '("addarticle"
                "\\documentclass{article}
 \\usepackage[utf8]{inputenc}
-\\usepackage{verbatim}
 \\usepackage[T1]{fontenc}
 \\usepackage{graphicx}
 \\usepackage{longtable}
