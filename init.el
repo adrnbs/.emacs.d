@@ -153,6 +153,9 @@
 	  :config (counsel-projectile-mode 1))
     (message "Using Linux environment configurations."))))
 
+(use-package shx)
+(require 'shx)
+
 (use-package all-the-icons :defer 0.5)
 
 ;; Window-numbering for improved switching/assignment.
@@ -172,6 +175,7 @@
 ;; Needs hunspell from pkg manager in system
 (use-package ispell
   :defer 2
+  :ensure t
   :ensure-system-package hunspell
   :custom
   (ispell-dictionary "en_US")
@@ -181,12 +185,12 @@
    (ispell-really-hunspell t)
    (ispell-silently-savep t)))
 
-(use-package aggressive-indent
-  :hook ((css-mode . aggressive-indent-mode)
-         (emacs-lisp-mode . aggressive-indent-mode)
-         (js-mode . aggressive-indent-mode)
-         (lisp-mode . aggressive-indent-mode))
-  :custom (aggressive-indent-comments-too))
+;;(use-package aggressive-indent
+;;  :hook ((css-mode . aggressive-indent-mode)
+;;		 (emacs-lisp-mode . aggressive-indent-mode)
+;;		 (js-mode . aggressive-indent-mode)
+;;		 (lisp-mode . aggressive-indent-mode))
+;;  :custom (aggressive-indent-comments-too))
 
 (use-package rainbow-mode
   :delight
@@ -548,6 +552,10 @@
   :config
   (add-to-list 'auto-mode-alist '("\\*.tf'" . terraform-mode)))
 
+(use-package clojure-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\*.clj'" . clojure-mode)))
+
 ;; TypeScript
 (use-package tide
   :ensure t
@@ -624,6 +632,8 @@
 
 ;; Company for auto-completion in Emacs' functions and variables.
 (use-package company
+  :ensure t
+  :init
   :defer 0.5
   :delight
   :custom
@@ -721,6 +731,7 @@
 ;; (occurs upon buffer saving).
 (use-package rust-mode
   :config
+  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
   (lambda () (setq indent-tabs-mode nil))
   (setq rust-format-on-save t))
 (require 'rust-mode)
@@ -940,10 +951,9 @@
 
 ;; Add formatting for LaTeX exports in org mode.
 (add-to-list 'org-latex-classes
-             '("adarticle"
+             '("addarticle"
                "\\documentclass{article}
 \\usepackage[utf8]{inputenc}
-\\usepackage{verbatim}
 \\usepackage[T1]{fontenc}
 \\usepackage{graphicx}
 \\usepackage{longtable}
@@ -964,59 +974,60 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(aggressive-indent-comments-too nil)
- '(alert-default-style (quote libnotify))
- '(auto-revert-verbose nil)
- '(browse-url-browser-function (quote browse-url-generic))
- '(browse-url-generic-program "qutebrowser")
- '(company-begin-commands (quote (self-insert-command)))
- '(company-idle-delay 0.1)
- '(company-minimum-prefix-length 2)
- '(company-show-numbers t)
- '(company-tooltip-align-annotations t)
+ '(aggressive-indent-comments-too nil nil nil "Customized with use-package aggressive-indent")
+ '(alert-default-style (quote libnotify) nil nil "Customized with use-package alert")
+ '(auto-revert-verbose nil nil nil "Customized with use-package autorevert")
+ '(browse-url-browser-function (quote browse-url-generic) nil nil "Customized with use-package browse-url")
+ '(browse-url-generic-program "qutebrowser" nil nil "Customized with use-package browse-url")
+ '(company-begin-commands (quote (self-insert-command)) nil nil "Customized with use-package company")
+ '(company-idle-delay 0.1 nil nil "Customized with use-package company")
+ '(company-minimum-prefix-length 2 nil nil "Customized with use-package company")
+ '(company-show-quick-access t nil nil "Customized with use-package company")
+ '(company-tooltip-align-annotations t nil nil "Customized with use-package company")
  '(custom-safe-themes
    (quote
 	("4ea1959cfaa526b795b45e55f77724df4be982b9cd33da8d701df8cdce5b2955" default)))
  '(doom-modeline-bar-width 3)
  '(doom-modeline-icon t)
- '(flycheck-display-errors-delay 0.3)
- '(flycheck-pylintrc "~/.pylintrc")
- '(flycheck-python-pylint-executable "/usr/bin/pylint")
- '(flycheck-stylelintrc "~/.stylelintrc.json")
+ '(flycheck-display-errors-delay 0.3 nil nil "Customized with use-package flycheck")
+ '(flycheck-pylintrc "~/.pylintrc" nil nil "Customized with use-package flycheck")
+ '(flycheck-python-pylint-executable "/usr/bin/pylint" nil nil "Customized with use-package flycheck")
+ '(flycheck-stylelintrc "~/.stylelintrc.json" nil nil "Customized with use-package flycheck")
  '(fringe ((t nil)))
  '(fringe-mode 0 nil (fringe))
- '(global-company-mode t)
- '(history-delete-duplicates t)
- '(history-length t)
- '(ispell-dictionary "en_US")
+ '(global-company-mode t nil nil "Customized with use-package company")
+ '(history-delete-duplicates t nil nil "Customized with use-package savehist")
+ '(history-length t nil nil "Customized with use-package savehist")
+ '(ispell-dictionary "en_US" nil nil "Customized with use-package ispell")
  '(ispell-dictionary-alist
    (quote
 	("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil
 	 ("-d" "en_US")
-	 nil utf-8)) t)
+	 nil utf-8)) t nil "Customized with use-package ispell")
  '(org-mode-line-clock
    ((t
 	 (:foreground "pink" :box
 				  (:line-width -1 :style released-button)))))
  '(package-selected-packages
    (quote
-	(terraform-mode use-package-ensure-system-package ibuffer-projectile engine-mode company-box major-mode-hydra imgbb webpaste smartparens rainbow-delimiters wiki-summary which-key try electric-operator rainbow-mode aggressive-indent alert counsel-projectile nord-theme flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons)))
- '(projectile-cache-file "/home/adornbos/nil/emacs/projectile.cache")
- '(projectile-completion-system (quote ivy))
- '(projectile-enable-caching t)
- '(projectile-keymap-prefix "")
+	(clojure-mode doom-modeline tide helm-ispell terraform-mode use-package-ensure-system-package ibuffer-projectile engine-mode company-box major-mode-hydra imgbb webpaste smartparens rainbow-delimiters wiki-summary which-key try electric-operator rainbow-mode aggressive-indent alert counsel-projectile nord-theme flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons)))
+ '(projectile-cache-file
+   (expand-file-name
+	(format "%s/emacs/projectile.cache" xdg-cache)) nil nil "Customized with use-package projectile")
+ '(projectile-completion-system (quote ivy) nil nil "Customized with use-package projectile")
+ '(projectile-enable-caching t nil nil "Customized with use-package projectile")
+ '(projectile-keymap-prefix (kbd "C-c C-p") nil nil "Customized with use-package projectile")
  '(projectile-known-projects-file "/home/adornbos/nil/emacs/projectile-bookmarks.eld")
- '(projectile-mode-line (quote (:eval (projectile-project-name))) t)
+ '(projectile-mode-line (quote (:eval (projectile-project-name))) t nil "Customized with use-package projectile")
  '(recentf-exclude
-   (quote
-	("COMMIT_EDITMSG" "~$" "/scp:" "/ssh:" "/sudo:" "/tmp/")))
- '(recentf-max-menu-items 15)
- '(recentf-max-saved-items 200)
- '(recentf-save-file "/home/adornbos/nil/emacs/recentf")
- '(savehist-additional-variables (quote (kill-ring search-ring regexp-search-ring)))
- '(savehist-file "/home/adornbos/nil/emacs/history")
- '(savehist-save-minibuffer-history 1)
- '(sp-escape-quotes-after-insert nil)
+   (list "COMMIT_EDITMSG" "~$" "/scp:" "/ssh:" "/sudo:" "/tmp/") nil nil "Customized with use-package recentf")
+ '(recentf-max-menu-items 15 nil nil "Customized with use-package recentf")
+ '(recentf-max-saved-items 200 nil nil "Customized with use-package recentf")
+ '(recentf-save-file (expand-file-name (format "%s/emacs/recentf" xdg-cache)) nil nil "Customized with use-package recentf")
+ '(savehist-additional-variables (quote (kill-ring search-ring regexp-search-ring)) nil nil "Customized with use-package savehist")
+ '(savehist-file "/home/adornbos/nil/emacs/history" nil nil "Customized with use-package savehist")
+ '(savehist-save-minibuffer-history 1 nil nil "Customized with use-package savehist")
+ '(sp-escape-quotes-after-insert nil nil nil "Customized with use-package smartparens")
  '(treemacs-fringe-indicator-mode t)
  '(vertical-border
    ((default
