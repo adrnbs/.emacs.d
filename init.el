@@ -62,8 +62,10 @@
 (menu-bar-mode -1)                                ; Hide menubar
 
 ;; Font configuration
-(set-face-attribute 'default nil :font "Source Code Pro Medium")
-(set-fontset-font t 'latin "Noto Sans")
+;;(set-face-attribute 'default nil :font "Source Code Pro Medium")
+(set-face-attribute 'default nil :font "Iosevka Extended")
+(set-fontset-font t 'latin "Iosevka Extended")
+;;(set-fontset-font t 'latin "Noto Sans")
 
 ;; https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 ;; https://github.com/rememberYou/.emacs.d/blob/master/config.org/
@@ -94,7 +96,6 @@
   :ensure t)
 
 ;;(require 'org-tempo)
-
 (add-to-list 'load-path "~/gitClones/org-mode/lisp")
 (require 'ox-confluence)
 
@@ -184,13 +185,6 @@
    (ispell-program-name (executable-find "hunspell"))
    (ispell-really-hunspell t)
    (ispell-silently-savep t)))
-
-;;(use-package aggressive-indent
-;;  :hook ((css-mode . aggressive-indent-mode)
-;;		 (emacs-lisp-mode . aggressive-indent-mode)
-;;		 (js-mode . aggressive-indent-mode)
-;;		 (lisp-mode . aggressive-indent-mode))
-;;  :custom (aggressive-indent-comments-too))
 
 (use-package rainbow-mode
   :delight
@@ -556,18 +550,56 @@
   :config
   (add-to-list 'auto-mode-alist '("\\*.clj'" . clojure-mode)))
 
-;; TypeScript
-(use-package tide
-  :ensure t
-  :after (typescript-mode company flycheck)
-  :hook ((typescript-mode . tide-setup)
-         (typescript-mode . tide-hl-identifier-mode)
-         (before-save . tide-format-before-save)))
+(use-package go-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\*.go'" . go-mode)))
+
+(setq lsp-keymap-prefix "C-(")
+
+(use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-(")
+  :hook (
+         (go-mode . lsp-deferred)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp-deferred)
+
+;; Go - lsp-mode
+;; Set up before-save hooks to format buffer and add/delete imports.
+(defun lsp-go-install-save-hooks ()
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t))
+(add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+
+;; Start LSP Mode and YASnippet mode
+(add-hook 'go-mode-hook #'lsp-deferred)
+(add-hook 'go-mode-hook #'yas-minor-mode)
+
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode)
+;; if you are ivy user
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+;; optionally if you want to use debugger
+(use-package dap-mode)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+;; optional if you want which-key integration
+(use-package which-key
+    :config
+    (which-key-mode))
+
+;; To set the garbage collection threshold to high (100 MB) since LSP client-server communication generates a lot of output/garbage
+(setq gc-cons-threshold 100000000)
+;; To increase the amount of data Emacs reads from a process
+(setq read-process-output-max (* 1024 1024))
 
 ;; Dashboard setup.
 (defun my/dashboard-banner ()
-  """Set a dashboard banner including information on package initialization
-   time and garbage collections."""
+  """Set a dashboard banner including information on package initialization time and garbage collections."""
   (setq dashboard-banner-logo-title
         (format "Emacs ready in %.2f seconds with %d garbage collections."
                 (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
@@ -629,25 +661,6 @@
 (use-package magit
   :bind (("C-x g" . magit-status)
 		 ("C-x M-g" . magit-dispatch)))
-
-;; Company for auto-completion in Emacs' functions and variables.
-(use-package company
-  :ensure t
-  :init
-  :defer 0.5
-  :delight
-  :custom
-  (company-begin-commands '(self-insert-command))
-  (company-idle-delay .1)
-  (company-minimum-prefix-length 2)
-  (company-show-numbers t)
-  (company-tooltip-align-annotations 't)
-  (global-company-mode t))
-
-(use-package company-box
-  :after company
-  :delight
-  :hook (company-mode . company-box-mode))
 
 ;; Qutebrowser, minimal gui
 (use-package browse-url
@@ -724,7 +737,7 @@
   :config
   (setq restclient-mode 1))
 
-(use-package company-restclient)
+;;(use-package company-restclient)
 
 ;; Install and load rust-mode for editing code w/ indents and rustfmt.
 ;; Rust-format-buffer will format code with rustfmt if installed
@@ -769,12 +782,23 @@
 
 ;; All the icons
 (use-package all-the-icons)
+
 ;; Nice colors.
-(use-package dracula-theme)
+(use-package doom-themes
+  :ensure t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-laserwave t)
+  (setq doom-themes-treemacs-theme "doom-colors") ; use "doom-colors" for less minimal icon theme
+  (doom-themes-treemacs-config)
+  (doom-themes-org-config))
+  
+;;(use-package dracula-theme)
 ;;(use-package nord-theme)
-(add-to-list 'custom-theme-load-path (expand-file-name "~/.emacs.d/themes/"))
-(load-theme 'dracula t)
-;;(use-package gruber-darker-theme)
+;;(add-to-list 'custom-theme-load-path (expand-file-name "~/.emacs.d/themes/"))
+;;(load-theme 'dracula t)
 
 ;;(use-package spacemacs-theme
 ;;  :defer t
@@ -791,9 +815,9 @@
   (auto-package-update-maybe))
 
 ;; Doom modeline
-(use-package doom-modeline
-  :ensure t
-  :init (doom-modeline-mode 1))
+;;(use-package doom-modeline
+;;  :ensure t
+;;  :init (doom-modeline-mode 1))
 
 ;; Orgmode.
 (use-package org)
@@ -846,6 +870,9 @@
 (global-unset-key (kbd "C-x c"))
 
 (global-set-key (kbd "C-S-d") 'duplicate-line)
+
+;; Org table format region
+(global-set-key (kbd "C-c |") 'org-table-convert-region)
 
 ;; Display line numbers in buffer globally, or in active buffer.
 (global-set-key (kbd "C-c n l g") 'global-displayd-line-numbers-mode) ;; Display lines global
@@ -926,17 +953,6 @@
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
-;; Invoke powerline
-;; Installed using: .emacs.d/vendor
-;; git clone git://github.com/jonathanchu/emacs-powerline.git
-(setq powerline-arrow-shape 'arrow) ;; default
-;; (setq powerline-arrow-shape 'curve)
-;; (setq powerline-arrow-shape 'arrow14) ;; best for small fonts
-;; Change mode-line color
-;; (custom-set-faces
-;; '(mode-line ((t (:foreground "#030303" :background "#bdbdbd" :box nil))))
-;; '(mode-line-inactive ((t (:foreground "#f9f9f9" :background "#666666" :box nil)))))
-
 ;; Set column position display for buffer (l, c).
 (setq column-number-mode t)
 
@@ -974,80 +990,12 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(aggressive-indent-comments-too nil nil nil "Customized with use-package aggressive-indent")
- '(alert-default-style (quote libnotify) nil nil "Customized with use-package alert")
- '(auto-revert-verbose nil nil nil "Customized with use-package autorevert")
- '(browse-url-browser-function (quote browse-url-generic) nil nil "Customized with use-package browse-url")
- '(browse-url-generic-program "qutebrowser" nil nil "Customized with use-package browse-url")
- '(company-begin-commands (quote (self-insert-command)) nil nil "Customized with use-package company")
- '(company-idle-delay 0.1 nil nil "Customized with use-package company")
- '(company-minimum-prefix-length 2 nil nil "Customized with use-package company")
- '(company-show-quick-access t nil nil "Customized with use-package company")
- '(company-tooltip-align-annotations t nil nil "Customized with use-package company")
- '(custom-safe-themes
-   (quote
-	("4ea1959cfaa526b795b45e55f77724df4be982b9cd33da8d701df8cdce5b2955" default)))
- '(doom-modeline-bar-width 3)
- '(doom-modeline-icon t)
- '(flycheck-display-errors-delay 0.3 nil nil "Customized with use-package flycheck")
- '(flycheck-pylintrc "~/.pylintrc" nil nil "Customized with use-package flycheck")
- '(flycheck-python-pylint-executable "/usr/bin/pylint" nil nil "Customized with use-package flycheck")
- '(flycheck-stylelintrc "~/.stylelintrc.json" nil nil "Customized with use-package flycheck")
- '(fringe ((t nil)))
- '(fringe-mode 0 nil (fringe))
- '(global-company-mode t nil nil "Customized with use-package company")
- '(history-delete-duplicates t nil nil "Customized with use-package savehist")
- '(history-length t nil nil "Customized with use-package savehist")
- '(ispell-dictionary "en_US" nil nil "Customized with use-package ispell")
- '(ispell-dictionary-alist
-   (quote
-	("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil
-	 ("-d" "en_US")
-	 nil utf-8)) t nil "Customized with use-package ispell")
- '(org-mode-line-clock
-   ((t
-	 (:foreground "pink" :box
-				  (:line-width -1 :style released-button)))))
  '(package-selected-packages
    (quote
-	(clojure-mode doom-modeline tide helm-ispell terraform-mode use-package-ensure-system-package ibuffer-projectile engine-mode company-box major-mode-hydra imgbb webpaste smartparens rainbow-delimiters wiki-summary which-key try electric-operator rainbow-mode aggressive-indent alert counsel-projectile nord-theme flycheck yaml-mode window-numbering use-package treemacs-magit treemacs-icons-dired projectile plantuml-mode org-web-tools org-bullets ob-http multiple-cursors groovy-mode graphviz-dot-mode drag-stuff dracula-theme dockerfile-mode dashboard counsel company-restclient cider cargo bbdb auto-package-update all-the-icons)))
- '(projectile-cache-file
-   (expand-file-name
-	(format "%s/emacs/projectile.cache" xdg-cache)) nil nil "Customized with use-package projectile")
- '(projectile-completion-system (quote ivy) nil nil "Customized with use-package projectile")
- '(projectile-enable-caching t nil nil "Customized with use-package projectile")
- '(projectile-keymap-prefix (kbd "C-c C-p") nil nil "Customized with use-package projectile")
- '(projectile-known-projects-file "/home/adornbos/nil/emacs/projectile-bookmarks.eld")
- '(projectile-mode-line (quote (:eval (projectile-project-name))) t nil "Customized with use-package projectile")
- '(recentf-exclude
-   (list "COMMIT_EDITMSG" "~$" "/scp:" "/ssh:" "/sudo:" "/tmp/") nil nil "Customized with use-package recentf")
- '(recentf-max-menu-items 15 nil nil "Customized with use-package recentf")
- '(recentf-max-saved-items 200 nil nil "Customized with use-package recentf")
- '(recentf-save-file (expand-file-name (format "%s/emacs/recentf" xdg-cache)) nil nil "Customized with use-package recentf")
- '(savehist-additional-variables (quote (kill-ring search-ring regexp-search-ring)) nil nil "Customized with use-package savehist")
- '(savehist-file "/home/adornbos/nil/emacs/history" nil nil "Customized with use-package savehist")
- '(savehist-save-minibuffer-history 1 nil nil "Customized with use-package savehist")
- '(sp-escape-quotes-after-insert nil nil nil "Customized with use-package smartparens")
- '(treemacs-fringe-indicator-mode t)
- '(vertical-border
-   ((default
-	  (:background "black" :distant-foreground "black" :foreground "black"))))
- '(window-divider
-   ((t
-	 (:background "black" :distant-foreground "black" :foreground "black" :width extra-condensed))))
- '(window-divider-default-places (quote right-only))
- '(window-divider-default-right-width 0.1)
- '(window-divider-first-pixel ((t (:width condensed))))
- '(window-divider-last-pixel ((t nil)))
- '(window-divider-mode nil))
+	(dap-mode lsp-treemacs lsp-ivy lsp-ui lsp-mode go-mode corfu yaml-mode window-numbering wiki-summary which-key webpaste use-package-ensure-system-package try treemacs-magit treemacs-icons-dired tide terraform-mode smartparens shx rainbow-mode rainbow-delimiters plantuml-mode org-bullets ob-http multiple-cursors major-mode-hydra kaolin-themes imgbb ibuffer-projectile gruber-darker-theme groovy-mode graphviz-dot-mode engine-mode electric-operator drag-stuff dracula-theme doom-themes doom-modeline dockerfile-mode dashboard counsel-projectile company-restclient company-box clojure-mode cargo bbdb auto-package-update all-the-icons alert))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(fringe ((t nil)))
- '(org-mode-line-clock ((t (:foreground "pink" :box (:line-width -1 :style released-button)))))
- '(vertical-border ((t nil)))
- '(window-divider ((t (:background "black" :distant-foreground "black" :foreground "black" :width extra-condensed))))
- '(window-divider-first-pixel ((t (:width condensed))))
- '(window-divider-last-pixel ((t nil))))
+ '(org-mode-line-clock ((t (:foreground "pink" :box (:line-width -1 :style released-button))))))
