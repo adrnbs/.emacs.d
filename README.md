@@ -1,4 +1,5 @@
 # Dotfiles for emacs
+*As of 2023 I've no plans to actively maintain this configuration as I've switched to neovim. This can still be considered a recent emacs configuration and stable.*
 
 After cloning the repository, within emacs execute `M-x(alt + x) load-file RET (enter) getStarted.el`, with a fully-fledged path e.g. ~/.emacs.d/getStarted.el. This will import the repository hooks for Melpa.
 
